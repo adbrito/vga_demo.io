@@ -1,7 +1,7 @@
 import pandas as pd
 import json
 
-def generar_html(nombre_excel, nombre_html="mapa.html"):
+def generar_html(nombre_excel, nombre_html="index.html"):
 
     df = pd.read_excel(nombre_excel)
     df.columns = df.columns.str.strip()
@@ -41,7 +41,7 @@ def generar_html(nombre_excel, nombre_html="mapa.html"):
 <html>
 <head>
 <meta charset="UTF-8">
-<title>Mapa Urbanización</title>
+<title>Mapa Urbanización Villa Geranio 4</title>
 
 <style>
 
