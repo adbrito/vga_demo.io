@@ -1,0 +1,4795 @@
+
+<!doctype html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>Mapa Urbanización</title>
+
+<style>
+
+body {
+font-family: Segoe UI;
+background:#f0f3f5;
+padding:20px;
+}
+
+.mapa {
+display:flex;
+flex-wrap:wrap;
+gap:25px;
+justify-content:center;
+}
+
+.manzana {
+border:1px solid #cfd8dc;
+padding:15px;
+background:white;
+border-radius:10px;
+min-width:260px;
+}
+
+.titulo-mz {
+font-weight:bold;
+border-bottom:2px solid #3498db;
+margin-bottom:10px;
+}
+
+.resumen-mz {
+font-size:12px;
+margin-bottom:15px;
+background:#f8f9fa;
+padding:8px;
+}
+
+.villas-grid {
+display:grid;
+grid-template-columns:repeat(6,38px);
+gap:5px;
+}
+
+.villa {
+width:38px;
+height:38px;
+display:flex;
+align-items:center;
+justify-content:center;
+font-size:11px;
+cursor:pointer;
+border-radius:4px;
+font-weight:bold;
+}
+
+.adeuda {
+background:#e74c3c;
+color:white;
+}
+
+.cancelado {
+background:#27ae60;
+color:white;
+}
+
+.afavor {
+background:#27ae60;
+color:white;
+}
+
+.noentregada {
+background:#f39c12;
+color:white;
+}
+
+</style>
+</head>
+
+<body>
+
+<h2 style="text-align:center">Estado Villas Urbanización</h2>
+
+<div class="mapa" id="mapa"></div>
+
+<script>
+
+const datos = [
+    {
+        "mz": 8070,
+        "villa": 1,
+        "propietario": "si",
+        "estado": "afavor",
+        "estado_label": "A FAVOR",
+        "deuda": 15.0
+    },
+    {
+        "mz": 8070,
+        "villa": 2,
+        "propietario": "no",
+        "estado": "adeuda",
+        "estado_label": "ADEUDA",
+        "deuda": -40.0
+    },
+    {
+        "mz": 8070,
+        "villa": 3,
+        "propietario": "si",
+        "estado": "afavor",
+        "estado_label": "A FAVOR",
+        "deuda": 15.0
+    },
+    {
+        "mz": 8070,
+        "villa": 4,
+        "propietario": "si",
+        "estado": "afavor",
+        "estado_label": "A FAVOR",
+        "deuda": 16.0
+    },
+    {
+        "mz": 8070,
+        "villa": 5,
+        "propietario": "si",
+        "estado": "afavor",
+        "estado_label": "A FAVOR",
+        "deuda": 15.0
+    },
+    {
+        "mz": 8070,
+        "villa": 6,
+        "propietario": "si",
+        "estado": "afavor",
+        "estado_label": "A FAVOR",
+        "deuda": 15.03
+    },
+    {
+        "mz": 8070,
+        "villa": 7,
+        "propietario": "no",
+        "estado": "adeuda",
+        "estado_label": "ADEUDA",
+        "deuda": -40.0
+    },
+    {
+        "mz": 8070,
+        "villa": 8,
+        "propietario": "si",
+        "estado": "adeuda",
+        "estado_label": "ADEUDA",
+        "deuda": -40.0
+    },
+    {
+        "mz": 8071,
+        "villa": 1,
+        "propietario": "si",
+        "estado": "afavor",
+        "estado_label": "A FAVOR",
+        "deuda": 15.0
+    },
+    {
+        "mz": 8071,
+        "villa": 2,
+        "propietario": "si",
+        "estado": "adeuda",
+        "estado_label": "ADEUDA",
+        "deuda": -24.98
+    },
+    {
+        "mz": 8071,
+        "villa": 3,
+        "propietario": "si",
+        "estado": "cancelado",
+        "estado_label": "CANCELADO",
+        "deuda": 0.0
+    },
+    {
+        "mz": 8071,
+        "villa": 4,
+        "propietario": "si",
+        "estado": "afavor",
+        "estado_label": "A FAVOR",
+        "deuda": 15.0
+    },
+    {
+        "mz": 8071,
+        "villa": 5,
+        "propietario": "si",
+        "estado": "afavor",
+        "estado_label": "A FAVOR",
+        "deuda": 15.02
+    },
+    {
+        "mz": 8071,
+        "villa": 6,
+        "propietario": "no",
+        "estado": "adeuda",
+        "estado_label": "ADEUDA",
+        "deuda": -40.0
+    },
+    {
+        "mz": 8071,
+        "villa": 7,
+        "propietario": "si",
+        "estado": "cancelado",
+        "estado_label": "CANCELADO",
+        "deuda": 0.0
+    },
+    {
+        "mz": 8071,
+        "villa": 8,
+        "propietario": "si",
+        "estado": "adeuda",
+        "estado_label": "ADEUDA",
+        "deuda": -40.0
+    },
+    {
+        "mz": 8071,
+        "villa": 9,
+        "propietario": "si",
+        "estado": "adeuda",
+        "estado_label": "ADEUDA",
+        "deuda": -24.98
+    },
+    {
+        "mz": 8071,
+        "villa": 10,
+        "propietario": "si",
+        "estado": "adeuda",
+        "estado_label": "ADEUDA",
+        "deuda": -24.0
+    },
+    {
+        "mz": 8072,
+        "villa": 1,
+        "propietario": "si",
+        "estado": "afavor",
+        "estado_label": "A FAVOR",
+        "deuda": 15.0
+    },
+    {
+        "mz": 8072,
+        "villa": 2,
+        "propietario": "si",
+        "estado": "adeuda",
+        "estado_label": "ADEUDA",
+        "deuda": -40.0
+    },
+    {
+        "mz": 8072,
+        "villa": 3,
+        "propietario": "si",
+        "estado": "afavor",
+        "estado_label": "A FAVOR",
+        "deuda": 15.0
+    },
+    {
+        "mz": 8072,
+        "villa": 4,
+        "propietario": "si",
+        "estado": "adeuda",
+        "estado_label": "ADEUDA",
+        "deuda": -24.98
+    },
+    {
+        "mz": 8072,
+        "villa": 5,
+        "propietario": "si",
+        "estado": "adeuda",
+        "estado_label": "ADEUDA",
+        "deuda": -40.0
+    },
+    {
+        "mz": 8072,
+        "villa": 6,
+        "propietario": "si",
+        "estado": "afavor",
+        "estado_label": "A FAVOR",
+        "deuda": 15.0
+    },
+    {
+        "mz": 8072,
+        "villa": 7,
+        "propietario": "si",
+        "estado": "cancelado",
+        "estado_label": "CANCELADO",
+        "deuda": 0.0
+    },
+    {
+        "mz": 8072,
+        "villa": 8,
+        "propietario": "si",
+        "estado": "afavor",
+        "estado_label": "A FAVOR",
+        "deuda": 15.02
+    },
+    {
+        "mz": 8072,
+        "villa": 9,
+        "propietario": "si",
+        "estado": "cancelado",
+        "estado_label": "CANCELADO",
+        "deuda": 0.0
+    },
+    {
+        "mz": 8072,
+        "villa": 10,
+        "propietario": "si",
+        "estado": "adeuda",
+        "estado_label": "ADEUDA",
+        "deuda": -40.0
+    },
+    {
+        "mz": 8072,
+        "villa": 11,
+        "propietario": "si",
+        "estado": "afavor",
+        "estado_label": "A FAVOR",
+        "deuda": 5.0
+    },
+    {
+        "mz": 8072,
+        "villa": 12,
+        "propietario": "si",
+        "estado": "afavor",
+        "estado_label": "A FAVOR",
+        "deuda": 15.02
+    },
+    {
+        "mz": 8072,
+        "villa": 13,
+        "propietario": "si",
+        "estado": "cancelado",
+        "estado_label": "CANCELADO",
+        "deuda": 0.0
+    },
+    {
+        "mz": 8072,
+        "villa": 14,
+        "propietario": "si",
+        "estado": "adeuda",
+        "estado_label": "ADEUDA",
+        "deuda": -40.0
+    },
+    {
+        "mz": 8072,
+        "villa": 15,
+        "propietario": "no",
+        "estado": "adeuda",
+        "estado_label": "ADEUDA",
+        "deuda": -40.0
+    },
+    {
+        "mz": 8072,
+        "villa": 16,
+        "propietario": "si",
+        "estado": "adeuda",
+        "estado_label": "ADEUDA",
+        "deuda": -40.0
+    },
+    {
+        "mz": 8072,
+        "villa": 17,
+        "propietario": "si",
+        "estado": "adeuda",
+        "estado_label": "ADEUDA",
+        "deuda": -40.0
+    },
+    {
+        "mz": 8072,
+        "villa": 18,
+        "propietario": "no",
+        "estado": "adeuda",
+        "estado_label": "ADEUDA",
+        "deuda": -40.0
+    },
+    {
+        "mz": 8072,
+        "villa": 19,
+        "propietario": "si",
+        "estado": "afavor",
+        "estado_label": "A FAVOR",
+        "deuda": 15.02
+    },
+    {
+        "mz": 8072,
+        "villa": 20,
+        "propietario": "si",
+        "estado": "afavor",
+        "estado_label": "A FAVOR",
+        "deuda": 15.02
+    },
+    {
+        "mz": 8072,
+        "villa": 21,
+        "propietario": "si",
+        "estado": "adeuda",
+        "estado_label": "ADEUDA",
+        "deuda": -40.0
+    },
+    {
+        "mz": 8072,
+        "villa": 22,
+        "propietario": "si",
+        "estado": "adeuda",
+        "estado_label": "ADEUDA",
+        "deuda": -24.98
+    },
+    {
+        "mz": 8072,
+        "villa": 23,
+        "propietario": "si",
+        "estado": "afavor",
+        "estado_label": "A FAVOR",
+        "deuda": 3.02
+    },
+    {
+        "mz": 8072,
+        "villa": 24,
+        "propietario": "no",
+        "estado": "adeuda",
+        "estado_label": "ADEUDA",
+        "deuda": -40.0
+    },
+    {
+        "mz": 8072,
+        "villa": 25,
+        "propietario": "si",
+        "estado": "adeuda",
+        "estado_label": "ADEUDA",
+        "deuda": -40.0
+    },
+    {
+        "mz": 8072,
+        "villa": 26,
+        "propietario": "si",
+        "estado": "adeuda",
+        "estado_label": "ADEUDA",
+        "deuda": -40.0
+    },
+    {
+        "mz": 8072,
+        "villa": 27,
+        "propietario": "si",
+        "estado": "afavor",
+        "estado_label": "A FAVOR",
+        "deuda": 15.0
+    },
+    {
+        "mz": 8072,
+        "villa": 28,
+        "propietario": "si",
+        "estado": "adeuda",
+        "estado_label": "ADEUDA",
+        "deuda": -25.0
+    },
+    {
+        "mz": 8072,
+        "villa": 29,
+        "propietario": "si",
+        "estado": "adeuda",
+        "estado_label": "ADEUDA",
+        "deuda": -40.0
+    },
+    {
+        "mz": 8072,
+        "villa": 30,
+        "propietario": "si",
+        "estado": "afavor",
+        "estado_label": "A FAVOR",
+        "deuda": 15.02
+    },
+    {
+        "mz": 8072,
+        "villa": 31,
+        "propietario": "si",
+        "estado": "adeuda",
+        "estado_label": "ADEUDA",
+        "deuda": -40.0
+    },
+    {
+        "mz": 8072,
+        "villa": 32,
+        "propietario": "si",
+        "estado": "adeuda",
+        "estado_label": "ADEUDA",
+        "deuda": -25.0
+    },
+    {
+        "mz": 8072,
+        "villa": 33,
+        "propietario": "si",
+        "estado": "adeuda",
+        "estado_label": "ADEUDA",
+        "deuda": -40.0
+    },
+    {
+        "mz": 8072,
+        "villa": 34,
+        "propietario": "si",
+        "estado": "adeuda",
+        "estado_label": "ADEUDA",
+        "deuda": -40.0
+    },
+    {
+        "mz": 8072,
+        "villa": 35,
+        "propietario": "si",
+        "estado": "afavor",
+        "estado_label": "A FAVOR",
+        "deuda": 15.2
+    },
+    {
+        "mz": 8072,
+        "villa": 36,
+        "propietario": "si",
+        "estado": "cancelado",
+        "estado_label": "CANCELADO",
+        "deuda": 0.0
+    },
+    {
+        "mz": 8072,
+        "villa": 37,
+        "propietario": "si",
+        "estado": "adeuda",
+        "estado_label": "ADEUDA",
+        "deuda": -40.0
+    },
+    {
+        "mz": 8072,
+        "villa": 38,
+        "propietario": "si",
+        "estado": "afavor",
+        "estado_label": "A FAVOR",
+        "deuda": 15.0
+    },
+    {
+        "mz": 8072,
+        "villa": 39,
+        "propietario": "si",
+        "estado": "adeuda",
+        "estado_label": "ADEUDA",
+        "deuda": -40.0
+    },
+    {
+        "mz": 8072,
+        "villa": 40,
+        "propietario": "si",
+        "estado": "cancelado",
+        "estado_label": "CANCELADO",
+        "deuda": 0.0
+    },
+    {
+        "mz": 8072,
+        "villa": 41,
+        "propietario": "si",
+        "estado": "adeuda",
+        "estado_label": "ADEUDA",
+        "deuda": -40.0
+    },
+    {
+        "mz": 8072,
+        "villa": 42,
+        "propietario": "si",
+        "estado": "adeuda",
+        "estado_label": "ADEUDA",
+        "deuda": -40.0
+    },
+    {
+        "mz": 8072,
+        "villa": 43,
+        "propietario": "si",
+        "estado": "adeuda",
+        "estado_label": "ADEUDA",
+        "deuda": -40.0
+    },
+    {
+        "mz": 8072,
+        "villa": 44,
+        "propietario": "si",
+        "estado": "adeuda",
+        "estado_label": "ADEUDA",
+        "deuda": -25.0
+    },
+    {
+        "mz": 8072,
+        "villa": 45,
+        "propietario": "si",
+        "estado": "adeuda",
+        "estado_label": "ADEUDA",
+        "deuda": -24.0
+    },
+    {
+        "mz": 8072,
+        "villa": 46,
+        "propietario": "si",
+        "estado": "adeuda",
+        "estado_label": "ADEUDA",
+        "deuda": -25.0
+    },
+    {
+        "mz": 8072,
+        "villa": 47,
+        "propietario": "si",
+        "estado": "adeuda",
+        "estado_label": "ADEUDA",
+        "deuda": -40.0
+    },
+    {
+        "mz": 8072,
+        "villa": 48,
+        "propietario": "si",
+        "estado": "adeuda",
+        "estado_label": "ADEUDA",
+        "deuda": -24.98
+    },
+    {
+        "mz": 8072,
+        "villa": 49,
+        "propietario": "si",
+        "estado": "adeuda",
+        "estado_label": "ADEUDA",
+        "deuda": -40.0
+    },
+    {
+        "mz": 8072,
+        "villa": 50,
+        "propietario": "si",
+        "estado": "afavor",
+        "estado_label": "A FAVOR",
+        "deuda": 15.0
+    },
+    {
+        "mz": 8073,
+        "villa": 1,
+        "propietario": "si",
+        "estado": "afavor",
+        "estado_label": "A FAVOR",
+        "deuda": 15.02
+    },
+    {
+        "mz": 8073,
+        "villa": 2,
+        "propietario": "si",
+        "estado": "adeuda",
+        "estado_label": "ADEUDA",
+        "deuda": -24.98
+    },
+    {
+        "mz": 8073,
+        "villa": 3,
+        "propietario": "si",
+        "estado": "afavor",
+        "estado_label": "A FAVOR",
+        "deuda": 15.0
+    },
+    {
+        "mz": 8073,
+        "villa": 4,
+        "propietario": "si",
+        "estado": "afavor",
+        "estado_label": "A FAVOR",
+        "deuda": 15.02
+    },
+    {
+        "mz": 8073,
+        "villa": 5,
+        "propietario": "si",
+        "estado": "afavor",
+        "estado_label": "A FAVOR",
+        "deuda": 15.0
+    },
+    {
+        "mz": 8073,
+        "villa": 6,
+        "propietario": "si",
+        "estado": "cancelado",
+        "estado_label": "CANCELADO",
+        "deuda": 0.0
+    },
+    {
+        "mz": 8073,
+        "villa": 7,
+        "propietario": "si",
+        "estado": "afavor",
+        "estado_label": "A FAVOR",
+        "deuda": 15.0
+    },
+    {
+        "mz": 8073,
+        "villa": 8,
+        "propietario": "si",
+        "estado": "afavor",
+        "estado_label": "A FAVOR",
+        "deuda": 15.0
+    },
+    {
+        "mz": 8073,
+        "villa": 9,
+        "propietario": "si",
+        "estado": "adeuda",
+        "estado_label": "ADEUDA",
+        "deuda": -24.98
+    },
+    {
+        "mz": 8073,
+        "villa": 10,
+        "propietario": "si",
+        "estado": "afavor",
+        "estado_label": "A FAVOR",
+        "deuda": 15.0
+    },
+    {
+        "mz": 8073,
+        "villa": 11,
+        "propietario": "si",
+        "estado": "adeuda",
+        "estado_label": "ADEUDA",
+        "deuda": -25.0
+    },
+    {
+        "mz": 8073,
+        "villa": 12,
+        "propietario": "si",
+        "estado": "adeuda",
+        "estado_label": "ADEUDA",
+        "deuda": -12.0
+    },
+    {
+        "mz": 8073,
+        "villa": 13,
+        "propietario": "si",
+        "estado": "adeuda",
+        "estado_label": "ADEUDA",
+        "deuda": -40.0
+    },
+    {
+        "mz": 8073,
+        "villa": 14,
+        "propietario": "si",
+        "estado": "afavor",
+        "estado_label": "A FAVOR",
+        "deuda": 15.02
+    },
+    {
+        "mz": 8073,
+        "villa": 15,
+        "propietario": "si",
+        "estado": "afavor",
+        "estado_label": "A FAVOR",
+        "deuda": 15.02
+    },
+    {
+        "mz": 8073,
+        "villa": 16,
+        "propietario": "no",
+        "estado": "adeuda",
+        "estado_label": "ADEUDA",
+        "deuda": -40.0
+    },
+    {
+        "mz": 8073,
+        "villa": 17,
+        "propietario": "si",
+        "estado": "adeuda",
+        "estado_label": "ADEUDA",
+        "deuda": -40.0
+    },
+    {
+        "mz": 8073,
+        "villa": 18,
+        "propietario": "si",
+        "estado": "adeuda",
+        "estado_label": "ADEUDA",
+        "deuda": -24.98
+    },
+    {
+        "mz": 8073,
+        "villa": 19,
+        "propietario": "si",
+        "estado": "afavor",
+        "estado_label": "A FAVOR",
+        "deuda": 15.02
+    },
+    {
+        "mz": 8073,
+        "villa": 20,
+        "propietario": "si",
+        "estado": "adeuda",
+        "estado_label": "ADEUDA",
+        "deuda": -24.98
+    },
+    {
+        "mz": 8073,
+        "villa": 21,
+        "propietario": "si",
+        "estado": "adeuda",
+        "estado_label": "ADEUDA",
+        "deuda": -24.98
+    },
+    {
+        "mz": 8073,
+        "villa": 22,
+        "propietario": "no",
+        "estado": "adeuda",
+        "estado_label": "ADEUDA",
+        "deuda": -40.0
+    },
+    {
+        "mz": 8073,
+        "villa": 23,
+        "propietario": "no",
+        "estado": "adeuda",
+        "estado_label": "ADEUDA",
+        "deuda": -40.0
+    },
+    {
+        "mz": 8073,
+        "villa": 24,
+        "propietario": "si",
+        "estado": "adeuda",
+        "estado_label": "ADEUDA",
+        "deuda": -40.0
+    },
+    {
+        "mz": 8073,
+        "villa": 25,
+        "propietario": "si",
+        "estado": "adeuda",
+        "estado_label": "ADEUDA",
+        "deuda": -40.0
+    },
+    {
+        "mz": 8073,
+        "villa": 26,
+        "propietario": "si",
+        "estado": "adeuda",
+        "estado_label": "ADEUDA",
+        "deuda": -40.0
+    },
+    {
+        "mz": 8073,
+        "villa": 27,
+        "propietario": "si",
+        "estado": "adeuda",
+        "estado_label": "ADEUDA",
+        "deuda": -40.0
+    },
+    {
+        "mz": 8073,
+        "villa": 28,
+        "propietario": "si",
+        "estado": "afavor",
+        "estado_label": "A FAVOR",
+        "deuda": 15.02
+    },
+    {
+        "mz": 8073,
+        "villa": 29,
+        "propietario": "si",
+        "estado": "afavor",
+        "estado_label": "A FAVOR",
+        "deuda": 15.0
+    },
+    {
+        "mz": 8073,
+        "villa": 30,
+        "propietario": "si",
+        "estado": "afavor",
+        "estado_label": "A FAVOR",
+        "deuda": 15.0
+    },
+    {
+        "mz": 8073,
+        "villa": 31,
+        "propietario": "si",
+        "estado": "afavor",
+        "estado_label": "A FAVOR",
+        "deuda": 15.0
+    },
+    {
+        "mz": 8073,
+        "villa": 32,
+        "propietario": "no",
+        "estado": "adeuda",
+        "estado_label": "ADEUDA",
+        "deuda": -40.0
+    },
+    {
+        "mz": 8073,
+        "villa": 33,
+        "propietario": "no",
+        "estado": "adeuda",
+        "estado_label": "ADEUDA",
+        "deuda": -40.0
+    },
+    {
+        "mz": 8073,
+        "villa": 34,
+        "propietario": "si",
+        "estado": "afavor",
+        "estado_label": "A FAVOR",
+        "deuda": 15.0
+    },
+    {
+        "mz": 8073,
+        "villa": 35,
+        "propietario": "si",
+        "estado": "cancelado",
+        "estado_label": "CANCELADO",
+        "deuda": 0.0
+    },
+    {
+        "mz": 8073,
+        "villa": 36,
+        "propietario": "si",
+        "estado": "afavor",
+        "estado_label": "A FAVOR",
+        "deuda": 15.02
+    },
+    {
+        "mz": 8074,
+        "villa": 1,
+        "propietario": "no",
+        "estado": "adeuda",
+        "estado_label": "ADEUDA",
+        "deuda": -40.0
+    },
+    {
+        "mz": 8074,
+        "villa": 2,
+        "propietario": "no",
+        "estado": "adeuda",
+        "estado_label": "ADEUDA",
+        "deuda": -40.0
+    },
+    {
+        "mz": 8074,
+        "villa": 3,
+        "propietario": "si",
+        "estado": "adeuda",
+        "estado_label": "ADEUDA",
+        "deuda": -40.0
+    },
+    {
+        "mz": 8074,
+        "villa": 4,
+        "propietario": "si",
+        "estado": "cancelado",
+        "estado_label": "CANCELADO",
+        "deuda": 0.0
+    },
+    {
+        "mz": 8074,
+        "villa": 5,
+        "propietario": "no",
+        "estado": "adeuda",
+        "estado_label": "ADEUDA",
+        "deuda": -40.0
+    },
+    {
+        "mz": 8074,
+        "villa": 6,
+        "propietario": "si",
+        "estado": "adeuda",
+        "estado_label": "ADEUDA",
+        "deuda": -40.0
+    },
+    {
+        "mz": 8074,
+        "villa": 7,
+        "propietario": "si",
+        "estado": "adeuda",
+        "estado_label": "ADEUDA",
+        "deuda": -24.98
+    },
+    {
+        "mz": 8074,
+        "villa": 8,
+        "propietario": "si",
+        "estado": "adeuda",
+        "estado_label": "ADEUDA",
+        "deuda": -24.98
+    },
+    {
+        "mz": 8074,
+        "villa": 9,
+        "propietario": "si",
+        "estado": "afavor",
+        "estado_label": "A FAVOR",
+        "deuda": 15.0
+    },
+    {
+        "mz": 8074,
+        "villa": 10,
+        "propietario": "si",
+        "estado": "cancelado",
+        "estado_label": "CANCELADO",
+        "deuda": 0.0
+    },
+    {
+        "mz": 8074,
+        "villa": 11,
+        "propietario": "no",
+        "estado": "adeuda",
+        "estado_label": "ADEUDA",
+        "deuda": -40.0
+    },
+    {
+        "mz": 8074,
+        "villa": 12,
+        "propietario": "si",
+        "estado": "adeuda",
+        "estado_label": "ADEUDA",
+        "deuda": -40.0
+    },
+    {
+        "mz": 8074,
+        "villa": 13,
+        "propietario": "si",
+        "estado": "adeuda",
+        "estado_label": "ADEUDA",
+        "deuda": -25.0
+    },
+    {
+        "mz": 8074,
+        "villa": 14,
+        "propietario": "si",
+        "estado": "afavor",
+        "estado_label": "A FAVOR",
+        "deuda": 15.02
+    },
+    {
+        "mz": 8074,
+        "villa": 15,
+        "propietario": "si",
+        "estado": "adeuda",
+        "estado_label": "ADEUDA",
+        "deuda": -40.0
+    },
+    {
+        "mz": 8074,
+        "villa": 16,
+        "propietario": "si",
+        "estado": "adeuda",
+        "estado_label": "ADEUDA",
+        "deuda": -40.0
+    },
+    {
+        "mz": 8074,
+        "villa": 17,
+        "propietario": "si",
+        "estado": "adeuda",
+        "estado_label": "ADEUDA",
+        "deuda": -40.0
+    },
+    {
+        "mz": 8074,
+        "villa": 18,
+        "propietario": "si",
+        "estado": "adeuda",
+        "estado_label": "ADEUDA",
+        "deuda": -40.0
+    },
+    {
+        "mz": 8074,
+        "villa": 19,
+        "propietario": "si",
+        "estado": "cancelado",
+        "estado_label": "CANCELADO",
+        "deuda": 0.0
+    },
+    {
+        "mz": 8074,
+        "villa": 20,
+        "propietario": "si",
+        "estado": "cancelado",
+        "estado_label": "CANCELADO",
+        "deuda": 0.0
+    },
+    {
+        "mz": 8074,
+        "villa": 21,
+        "propietario": "si",
+        "estado": "afavor",
+        "estado_label": "A FAVOR",
+        "deuda": 105.02
+    },
+    {
+        "mz": 8074,
+        "villa": 22,
+        "propietario": "si",
+        "estado": "afavor",
+        "estado_label": "A FAVOR",
+        "deuda": 15.0
+    },
+    {
+        "mz": 8074,
+        "villa": 23,
+        "propietario": "si",
+        "estado": "cancelado",
+        "estado_label": "CANCELADO",
+        "deuda": 0.0
+    },
+    {
+        "mz": 8074,
+        "villa": 24,
+        "propietario": "no",
+        "estado": "adeuda",
+        "estado_label": "ADEUDA",
+        "deuda": -40.0
+    },
+    {
+        "mz": 8074,
+        "villa": 25,
+        "propietario": "si",
+        "estado": "adeuda",
+        "estado_label": "ADEUDA",
+        "deuda": -40.0
+    },
+    {
+        "mz": 8074,
+        "villa": 26,
+        "propietario": "si",
+        "estado": "adeuda",
+        "estado_label": "ADEUDA",
+        "deuda": -40.0
+    },
+    {
+        "mz": 8074,
+        "villa": 27,
+        "propietario": "no",
+        "estado": "adeuda",
+        "estado_label": "ADEUDA",
+        "deuda": -40.0
+    },
+    {
+        "mz": 8074,
+        "villa": 28,
+        "propietario": "si",
+        "estado": "adeuda",
+        "estado_label": "ADEUDA",
+        "deuda": -25.0
+    },
+    {
+        "mz": 8074,
+        "villa": 29,
+        "propietario": "si",
+        "estado": "adeuda",
+        "estado_label": "ADEUDA",
+        "deuda": -40.0
+    },
+    {
+        "mz": 8074,
+        "villa": 30,
+        "propietario": "no",
+        "estado": "adeuda",
+        "estado_label": "ADEUDA",
+        "deuda": -40.0
+    },
+    {
+        "mz": 8074,
+        "villa": 31,
+        "propietario": "no",
+        "estado": "adeuda",
+        "estado_label": "ADEUDA",
+        "deuda": -40.0
+    },
+    {
+        "mz": 8074,
+        "villa": 32,
+        "propietario": "si",
+        "estado": "adeuda",
+        "estado_label": "ADEUDA",
+        "deuda": -40.0
+    },
+    {
+        "mz": 8074,
+        "villa": 33,
+        "propietario": "si",
+        "estado": "adeuda",
+        "estado_label": "ADEUDA",
+        "deuda": -40.0
+    },
+    {
+        "mz": 8074,
+        "villa": 34,
+        "propietario": "si",
+        "estado": "adeuda",
+        "estado_label": "ADEUDA",
+        "deuda": -40.0
+    },
+    {
+        "mz": 8074,
+        "villa": 35,
+        "propietario": "si",
+        "estado": "adeuda",
+        "estado_label": "ADEUDA",
+        "deuda": -40.0
+    },
+    {
+        "mz": 8074,
+        "villa": 36,
+        "propietario": "si",
+        "estado": "adeuda",
+        "estado_label": "ADEUDA",
+        "deuda": -25.0
+    },
+    {
+        "mz": 8074,
+        "villa": 37,
+        "propietario": "si",
+        "estado": "adeuda",
+        "estado_label": "ADEUDA",
+        "deuda": -40.0
+    },
+    {
+        "mz": 8074,
+        "villa": 38,
+        "propietario": "si",
+        "estado": "adeuda",
+        "estado_label": "ADEUDA",
+        "deuda": -24.95
+    },
+    {
+        "mz": 8074,
+        "villa": 39,
+        "propietario": "no",
+        "estado": "adeuda",
+        "estado_label": "ADEUDA",
+        "deuda": -40.0
+    },
+    {
+        "mz": 8074,
+        "villa": 40,
+        "propietario": "si",
+        "estado": "adeuda",
+        "estado_label": "ADEUDA",
+        "deuda": -25.0
+    },
+    {
+        "mz": 8074,
+        "villa": 41,
+        "propietario": "si",
+        "estado": "afavor",
+        "estado_label": "A FAVOR",
+        "deuda": 15.02
+    },
+    {
+        "mz": 8074,
+        "villa": 42,
+        "propietario": "si",
+        "estado": "adeuda",
+        "estado_label": "ADEUDA",
+        "deuda": -4.98
+    },
+    {
+        "mz": 8075,
+        "villa": 1,
+        "propietario": "si",
+        "estado": "afavor",
+        "estado_label": "A FAVOR",
+        "deuda": 15.0
+    },
+    {
+        "mz": 8075,
+        "villa": 2,
+        "propietario": "si",
+        "estado": "afavor",
+        "estado_label": "A FAVOR",
+        "deuda": 15.02
+    },
+    {
+        "mz": 8075,
+        "villa": 3,
+        "propietario": "si",
+        "estado": "adeuda",
+        "estado_label": "ADEUDA",
+        "deuda": -40.0
+    },
+    {
+        "mz": 8075,
+        "villa": 4,
+        "propietario": "si",
+        "estado": "afavor",
+        "estado_label": "A FAVOR",
+        "deuda": 15.02
+    },
+    {
+        "mz": 8075,
+        "villa": 5,
+        "propietario": "si",
+        "estado": "afavor",
+        "estado_label": "A FAVOR",
+        "deuda": 3.05
+    },
+    {
+        "mz": 8075,
+        "villa": 6,
+        "propietario": "no",
+        "estado": "adeuda",
+        "estado_label": "ADEUDA",
+        "deuda": -40.0
+    },
+    {
+        "mz": 8075,
+        "villa": 7,
+        "propietario": "si",
+        "estado": "adeuda",
+        "estado_label": "ADEUDA",
+        "deuda": -24.98
+    },
+    {
+        "mz": 8075,
+        "villa": 8,
+        "propietario": "si",
+        "estado": "adeuda",
+        "estado_label": "ADEUDA",
+        "deuda": -40.0
+    },
+    {
+        "mz": 8075,
+        "villa": 9,
+        "propietario": "si",
+        "estado": "cancelado",
+        "estado_label": "CANCELADO",
+        "deuda": 0.0
+    },
+    {
+        "mz": 8075,
+        "villa": 10,
+        "propietario": "si",
+        "estado": "afavor",
+        "estado_label": "A FAVOR",
+        "deuda": 15.0
+    },
+    {
+        "mz": 8075,
+        "villa": 11,
+        "propietario": "si",
+        "estado": "afavor",
+        "estado_label": "A FAVOR",
+        "deuda": 15.02
+    },
+    {
+        "mz": 8075,
+        "villa": 12,
+        "propietario": "si",
+        "estado": "adeuda",
+        "estado_label": "ADEUDA",
+        "deuda": -40.0
+    },
+    {
+        "mz": 8075,
+        "villa": 13,
+        "propietario": "si",
+        "estado": "afavor",
+        "estado_label": "A FAVOR",
+        "deuda": 15.05
+    },
+    {
+        "mz": 8075,
+        "villa": 14,
+        "propietario": "si",
+        "estado": "afavor",
+        "estado_label": "A FAVOR",
+        "deuda": 15.0
+    },
+    {
+        "mz": 8075,
+        "villa": 15,
+        "propietario": "si",
+        "estado": "afavor",
+        "estado_label": "A FAVOR",
+        "deuda": 15.02
+    },
+    {
+        "mz": 8075,
+        "villa": 16,
+        "propietario": "si",
+        "estado": "afavor",
+        "estado_label": "A FAVOR",
+        "deuda": 15.0
+    },
+    {
+        "mz": 8075,
+        "villa": 17,
+        "propietario": "si",
+        "estado": "cancelado",
+        "estado_label": "CANCELADO",
+        "deuda": 0.0
+    },
+    {
+        "mz": 8075,
+        "villa": 18,
+        "propietario": "si",
+        "estado": "cancelado",
+        "estado_label": "CANCELADO",
+        "deuda": 0.0
+    },
+    {
+        "mz": 8075,
+        "villa": 19,
+        "propietario": "si",
+        "estado": "adeuda",
+        "estado_label": "ADEUDA",
+        "deuda": -40.0
+    },
+    {
+        "mz": 8075,
+        "villa": 20,
+        "propietario": "si",
+        "estado": "adeuda",
+        "estado_label": "ADEUDA",
+        "deuda": -40.0
+    },
+    {
+        "mz": 8075,
+        "villa": 21,
+        "propietario": "si",
+        "estado": "afavor",
+        "estado_label": "A FAVOR",
+        "deuda": 15.02
+    },
+    {
+        "mz": 8075,
+        "villa": 22,
+        "propietario": "no",
+        "estado": "adeuda",
+        "estado_label": "ADEUDA",
+        "deuda": -40.0
+    },
+    {
+        "mz": 8075,
+        "villa": 23,
+        "propietario": "si",
+        "estado": "adeuda",
+        "estado_label": "ADEUDA",
+        "deuda": -40.0
+    },
+    {
+        "mz": 8075,
+        "villa": 24,
+        "propietario": "si",
+        "estado": "afavor",
+        "estado_label": "A FAVOR",
+        "deuda": 15.0
+    },
+    {
+        "mz": 8075,
+        "villa": 25,
+        "propietario": "no",
+        "estado": "adeuda",
+        "estado_label": "ADEUDA",
+        "deuda": -40.0
+    },
+    {
+        "mz": 8075,
+        "villa": 26,
+        "propietario": "si",
+        "estado": "afavor",
+        "estado_label": "A FAVOR",
+        "deuda": 15.0
+    },
+    {
+        "mz": 8075,
+        "villa": 27,
+        "propietario": "si",
+        "estado": "adeuda",
+        "estado_label": "ADEUDA",
+        "deuda": -40.0
+    },
+    {
+        "mz": 8075,
+        "villa": 28,
+        "propietario": "si",
+        "estado": "adeuda",
+        "estado_label": "ADEUDA",
+        "deuda": -40.0
+    },
+    {
+        "mz": 8075,
+        "villa": 29,
+        "propietario": "si",
+        "estado": "adeuda",
+        "estado_label": "ADEUDA",
+        "deuda": -40.0
+    },
+    {
+        "mz": 8075,
+        "villa": 30,
+        "propietario": "si",
+        "estado": "adeuda",
+        "estado_label": "ADEUDA",
+        "deuda": -4.98
+    },
+    {
+        "mz": 8075,
+        "villa": 31,
+        "propietario": "no",
+        "estado": "adeuda",
+        "estado_label": "ADEUDA",
+        "deuda": -40.0
+    },
+    {
+        "mz": 8075,
+        "villa": 32,
+        "propietario": "si",
+        "estado": "afavor",
+        "estado_label": "A FAVOR",
+        "deuda": 15.02
+    },
+    {
+        "mz": 8075,
+        "villa": 33,
+        "propietario": "si",
+        "estado": "cancelado",
+        "estado_label": "CANCELADO",
+        "deuda": 0.0
+    },
+    {
+        "mz": 8075,
+        "villa": 34,
+        "propietario": "no",
+        "estado": "adeuda",
+        "estado_label": "ADEUDA",
+        "deuda": -40.0
+    },
+    {
+        "mz": 8075,
+        "villa": 35,
+        "propietario": "si",
+        "estado": "afavor",
+        "estado_label": "A FAVOR",
+        "deuda": 15.0
+    },
+    {
+        "mz": 8075,
+        "villa": 36,
+        "propietario": "si",
+        "estado": "adeuda",
+        "estado_label": "ADEUDA",
+        "deuda": -24.5
+    },
+    {
+        "mz": 8075,
+        "villa": 37,
+        "propietario": "si",
+        "estado": "adeuda",
+        "estado_label": "ADEUDA",
+        "deuda": -40.0
+    },
+    {
+        "mz": 8075,
+        "villa": 38,
+        "propietario": "no",
+        "estado": "adeuda",
+        "estado_label": "ADEUDA",
+        "deuda": -40.0
+    },
+    {
+        "mz": 8075,
+        "villa": 39,
+        "propietario": "no",
+        "estado": "adeuda",
+        "estado_label": "ADEUDA",
+        "deuda": -40.0
+    },
+    {
+        "mz": 8075,
+        "villa": 40,
+        "propietario": "si",
+        "estado": "afavor",
+        "estado_label": "A FAVOR",
+        "deuda": 15.02
+    },
+    {
+        "mz": 8075,
+        "villa": 41,
+        "propietario": "no",
+        "estado": "adeuda",
+        "estado_label": "ADEUDA",
+        "deuda": -40.0
+    },
+    {
+        "mz": 8075,
+        "villa": 42,
+        "propietario": "si",
+        "estado": "adeuda",
+        "estado_label": "ADEUDA",
+        "deuda": -40.0
+    },
+    {
+        "mz": 8076,
+        "villa": 1,
+        "propietario": "si",
+        "estado": "afavor",
+        "estado_label": "A FAVOR",
+        "deuda": 15.0
+    },
+    {
+        "mz": 8076,
+        "villa": 2,
+        "propietario": "si",
+        "estado": "afavor",
+        "estado_label": "A FAVOR",
+        "deuda": 15.02
+    },
+    {
+        "mz": 8076,
+        "villa": 3,
+        "propietario": "no",
+        "estado": "adeuda",
+        "estado_label": "ADEUDA",
+        "deuda": -40.0
+    },
+    {
+        "mz": 8076,
+        "villa": 4,
+        "propietario": "si",
+        "estado": "afavor",
+        "estado_label": "A FAVOR",
+        "deuda": 15.0
+    },
+    {
+        "mz": 8076,
+        "villa": 5,
+        "propietario": "si",
+        "estado": "afavor",
+        "estado_label": "A FAVOR",
+        "deuda": 15.0
+    },
+    {
+        "mz": 8076,
+        "villa": 6,
+        "propietario": "no",
+        "estado": "adeuda",
+        "estado_label": "ADEUDA",
+        "deuda": -40.0
+    },
+    {
+        "mz": 8076,
+        "villa": 7,
+        "propietario": "si",
+        "estado": "adeuda",
+        "estado_label": "ADEUDA",
+        "deuda": -40.0
+    },
+    {
+        "mz": 8076,
+        "villa": 8,
+        "propietario": "si",
+        "estado": "afavor",
+        "estado_label": "A FAVOR",
+        "deuda": 15.02
+    },
+    {
+        "mz": 8076,
+        "villa": 9,
+        "propietario": "no",
+        "estado": "adeuda",
+        "estado_label": "ADEUDA",
+        "deuda": -40.0
+    },
+    {
+        "mz": 8076,
+        "villa": 10,
+        "propietario": "si",
+        "estado": "afavor",
+        "estado_label": "A FAVOR",
+        "deuda": 40.0
+    },
+    {
+        "mz": 8076,
+        "villa": 11,
+        "propietario": "si",
+        "estado": "afavor",
+        "estado_label": "A FAVOR",
+        "deuda": 15.02
+    },
+    {
+        "mz": 8076,
+        "villa": 12,
+        "propietario": "si",
+        "estado": "adeuda",
+        "estado_label": "ADEUDA",
+        "deuda": -10.0
+    },
+    {
+        "mz": 8076,
+        "villa": 13,
+        "propietario": "no",
+        "estado": "adeuda",
+        "estado_label": "ADEUDA",
+        "deuda": -40.0
+    },
+    {
+        "mz": 8076,
+        "villa": 14,
+        "propietario": "si",
+        "estado": "adeuda",
+        "estado_label": "ADEUDA",
+        "deuda": -24.98
+    },
+    {
+        "mz": 8076,
+        "villa": 15,
+        "propietario": "si",
+        "estado": "cancelado",
+        "estado_label": "CANCELADO",
+        "deuda": 0.0
+    },
+    {
+        "mz": 8076,
+        "villa": 16,
+        "propietario": "no",
+        "estado": "adeuda",
+        "estado_label": "ADEUDA",
+        "deuda": -40.0
+    },
+    {
+        "mz": 8076,
+        "villa": 17,
+        "propietario": "si",
+        "estado": "adeuda",
+        "estado_label": "ADEUDA",
+        "deuda": -40.0
+    },
+    {
+        "mz": 8076,
+        "villa": 18,
+        "propietario": "no",
+        "estado": "adeuda",
+        "estado_label": "ADEUDA",
+        "deuda": -40.0
+    },
+    {
+        "mz": 8076,
+        "villa": 19,
+        "propietario": "si",
+        "estado": "afavor",
+        "estado_label": "A FAVOR",
+        "deuda": 15.0
+    },
+    {
+        "mz": 8076,
+        "villa": 20,
+        "propietario": "si",
+        "estado": "afavor",
+        "estado_label": "A FAVOR",
+        "deuda": 5.0
+    },
+    {
+        "mz": 8076,
+        "villa": 21,
+        "propietario": "si",
+        "estado": "adeuda",
+        "estado_label": "ADEUDA",
+        "deuda": -25.0
+    },
+    {
+        "mz": 8076,
+        "villa": 22,
+        "propietario": "si",
+        "estado": "adeuda",
+        "estado_label": "ADEUDA",
+        "deuda": -40.0
+    },
+    {
+        "mz": 8076,
+        "villa": 23,
+        "propietario": "si",
+        "estado": "afavor",
+        "estado_label": "A FAVOR",
+        "deuda": 15.02
+    },
+    {
+        "mz": 8076,
+        "villa": 24,
+        "propietario": "si",
+        "estado": "adeuda",
+        "estado_label": "ADEUDA",
+        "deuda": -40.0
+    },
+    {
+        "mz": 8076,
+        "villa": 25,
+        "propietario": "si",
+        "estado": "afavor",
+        "estado_label": "A FAVOR",
+        "deuda": 5.0
+    },
+    {
+        "mz": 8076,
+        "villa": 26,
+        "propietario": "si",
+        "estado": "adeuda",
+        "estado_label": "ADEUDA",
+        "deuda": -40.0
+    },
+    {
+        "mz": 8076,
+        "villa": 27,
+        "propietario": "si",
+        "estado": "adeuda",
+        "estado_label": "ADEUDA",
+        "deuda": -40.0
+    },
+    {
+        "mz": 8076,
+        "villa": 28,
+        "propietario": "si",
+        "estado": "adeuda",
+        "estado_label": "ADEUDA",
+        "deuda": -40.0
+    },
+    {
+        "mz": 8076,
+        "villa": 29,
+        "propietario": "no",
+        "estado": "adeuda",
+        "estado_label": "ADEUDA",
+        "deuda": -40.0
+    },
+    {
+        "mz": 8076,
+        "villa": 30,
+        "propietario": "no",
+        "estado": "adeuda",
+        "estado_label": "ADEUDA",
+        "deuda": -40.0
+    },
+    {
+        "mz": 8076,
+        "villa": 31,
+        "propietario": "no",
+        "estado": "adeuda",
+        "estado_label": "ADEUDA",
+        "deuda": -40.0
+    },
+    {
+        "mz": 8076,
+        "villa": 32,
+        "propietario": "si",
+        "estado": "adeuda",
+        "estado_label": "ADEUDA",
+        "deuda": -40.0
+    },
+    {
+        "mz": 8076,
+        "villa": 33,
+        "propietario": "no",
+        "estado": "adeuda",
+        "estado_label": "ADEUDA",
+        "deuda": -40.0
+    },
+    {
+        "mz": 8076,
+        "villa": 34,
+        "propietario": "no",
+        "estado": "adeuda",
+        "estado_label": "ADEUDA",
+        "deuda": -40.0
+    },
+    {
+        "mz": 8076,
+        "villa": 35,
+        "propietario": "no",
+        "estado": "adeuda",
+        "estado_label": "ADEUDA",
+        "deuda": -40.0
+    },
+    {
+        "mz": 8076,
+        "villa": 36,
+        "propietario": "si",
+        "estado": "adeuda",
+        "estado_label": "ADEUDA",
+        "deuda": -24.98
+    },
+    {
+        "mz": 8076,
+        "villa": 37,
+        "propietario": "si",
+        "estado": "afavor",
+        "estado_label": "A FAVOR",
+        "deuda": 15.0
+    },
+    {
+        "mz": 8076,
+        "villa": 38,
+        "propietario": "si",
+        "estado": "adeuda",
+        "estado_label": "ADEUDA",
+        "deuda": -40.0
+    },
+    {
+        "mz": 8076,
+        "villa": 39,
+        "propietario": "si",
+        "estado": "adeuda",
+        "estado_label": "ADEUDA",
+        "deuda": -40.0
+    },
+    {
+        "mz": 8076,
+        "villa": 40,
+        "propietario": "si",
+        "estado": "adeuda",
+        "estado_label": "ADEUDA",
+        "deuda": -25.0
+    },
+    {
+        "mz": 8076,
+        "villa": 41,
+        "propietario": "si",
+        "estado": "afavor",
+        "estado_label": "A FAVOR",
+        "deuda": 15.02
+    },
+    {
+        "mz": 8076,
+        "villa": 42,
+        "propietario": "si",
+        "estado": "afavor",
+        "estado_label": "A FAVOR",
+        "deuda": 15.0
+    },
+    {
+        "mz": 8077,
+        "villa": 1,
+        "propietario": "si",
+        "estado": "adeuda",
+        "estado_label": "ADEUDA",
+        "deuda": -25.0
+    },
+    {
+        "mz": 8077,
+        "villa": 2,
+        "propietario": "no",
+        "estado": "adeuda",
+        "estado_label": "ADEUDA",
+        "deuda": -40.0
+    },
+    {
+        "mz": 8077,
+        "villa": 3,
+        "propietario": "si",
+        "estado": "adeuda",
+        "estado_label": "ADEUDA",
+        "deuda": -40.0
+    },
+    {
+        "mz": 8077,
+        "villa": 4,
+        "propietario": "si",
+        "estado": "afavor",
+        "estado_label": "A FAVOR",
+        "deuda": 15.0
+    },
+    {
+        "mz": 8077,
+        "villa": 5,
+        "propietario": "si",
+        "estado": "afavor",
+        "estado_label": "A FAVOR",
+        "deuda": 15.0
+    },
+    {
+        "mz": 8077,
+        "villa": 6,
+        "propietario": "si",
+        "estado": "adeuda",
+        "estado_label": "ADEUDA",
+        "deuda": -10.0
+    },
+    {
+        "mz": 8077,
+        "villa": 7,
+        "propietario": "no",
+        "estado": "adeuda",
+        "estado_label": "ADEUDA",
+        "deuda": -40.0
+    },
+    {
+        "mz": 8077,
+        "villa": 8,
+        "propietario": "no",
+        "estado": "adeuda",
+        "estado_label": "ADEUDA",
+        "deuda": -40.0
+    },
+    {
+        "mz": 8077,
+        "villa": 9,
+        "propietario": "no",
+        "estado": "adeuda",
+        "estado_label": "ADEUDA",
+        "deuda": -40.0
+    },
+    {
+        "mz": 8077,
+        "villa": 10,
+        "propietario": "si",
+        "estado": "adeuda",
+        "estado_label": "ADEUDA",
+        "deuda": -40.0
+    },
+    {
+        "mz": 8077,
+        "villa": 11,
+        "propietario": "si",
+        "estado": "afavor",
+        "estado_label": "A FAVOR",
+        "deuda": 15.0
+    },
+    {
+        "mz": 8077,
+        "villa": 12,
+        "propietario": "si",
+        "estado": "adeuda",
+        "estado_label": "ADEUDA",
+        "deuda": -40.0
+    },
+    {
+        "mz": 8077,
+        "villa": 13,
+        "propietario": "si",
+        "estado": "afavor",
+        "estado_label": "A FAVOR",
+        "deuda": 15.0
+    },
+    {
+        "mz": 8077,
+        "villa": 14,
+        "propietario": "si",
+        "estado": "adeuda",
+        "estado_label": "ADEUDA",
+        "deuda": -40.0
+    },
+    {
+        "mz": 8077,
+        "villa": 15,
+        "propietario": "si",
+        "estado": "adeuda",
+        "estado_label": "ADEUDA",
+        "deuda": -40.0
+    },
+    {
+        "mz": 8077,
+        "villa": 16,
+        "propietario": "si",
+        "estado": "adeuda",
+        "estado_label": "ADEUDA",
+        "deuda": -24.98
+    },
+    {
+        "mz": 8077,
+        "villa": 17,
+        "propietario": "si",
+        "estado": "adeuda",
+        "estado_label": "ADEUDA",
+        "deuda": -40.0
+    },
+    {
+        "mz": 8077,
+        "villa": 18,
+        "propietario": "si",
+        "estado": "cancelado",
+        "estado_label": "CANCELADO",
+        "deuda": 0.0
+    },
+    {
+        "mz": 8077,
+        "villa": 19,
+        "propietario": "si",
+        "estado": "cancelado",
+        "estado_label": "CANCELADO",
+        "deuda": 0.0
+    },
+    {
+        "mz": 8077,
+        "villa": 20,
+        "propietario": "si",
+        "estado": "adeuda",
+        "estado_label": "ADEUDA",
+        "deuda": -40.0
+    },
+    {
+        "mz": 8077,
+        "villa": 21,
+        "propietario": "si",
+        "estado": "adeuda",
+        "estado_label": "ADEUDA",
+        "deuda": -40.0
+    },
+    {
+        "mz": 8077,
+        "villa": 22,
+        "propietario": "si",
+        "estado": "afavor",
+        "estado_label": "A FAVOR",
+        "deuda": 15.0
+    },
+    {
+        "mz": 8077,
+        "villa": 23,
+        "propietario": "si",
+        "estado": "adeuda",
+        "estado_label": "ADEUDA",
+        "deuda": -40.0
+    },
+    {
+        "mz": 8077,
+        "villa": 24,
+        "propietario": "si",
+        "estado": "adeuda",
+        "estado_label": "ADEUDA",
+        "deuda": -40.0
+    },
+    {
+        "mz": 8077,
+        "villa": 25,
+        "propietario": "si",
+        "estado": "adeuda",
+        "estado_label": "ADEUDA",
+        "deuda": -40.0
+    },
+    {
+        "mz": 8077,
+        "villa": 26,
+        "propietario": "no",
+        "estado": "adeuda",
+        "estado_label": "ADEUDA",
+        "deuda": -40.0
+    },
+    {
+        "mz": 8077,
+        "villa": 27,
+        "propietario": "no",
+        "estado": "adeuda",
+        "estado_label": "ADEUDA",
+        "deuda": -40.0
+    },
+    {
+        "mz": 8077,
+        "villa": 28,
+        "propietario": "no",
+        "estado": "adeuda",
+        "estado_label": "ADEUDA",
+        "deuda": -40.0
+    },
+    {
+        "mz": 8077,
+        "villa": 29,
+        "propietario": "no",
+        "estado": "adeuda",
+        "estado_label": "ADEUDA",
+        "deuda": -40.0
+    },
+    {
+        "mz": 8077,
+        "villa": 30,
+        "propietario": "si",
+        "estado": "cancelado",
+        "estado_label": "CANCELADO",
+        "deuda": 0.0
+    },
+    {
+        "mz": 8077,
+        "villa": 31,
+        "propietario": "si",
+        "estado": "afavor",
+        "estado_label": "A FAVOR",
+        "deuda": 15.0
+    },
+    {
+        "mz": 8077,
+        "villa": 32,
+        "propietario": "si",
+        "estado": "afavor",
+        "estado_label": "A FAVOR",
+        "deuda": 15.02
+    },
+    {
+        "mz": 8077,
+        "villa": 33,
+        "propietario": "si",
+        "estado": "adeuda",
+        "estado_label": "ADEUDA",
+        "deuda": -40.0
+    },
+    {
+        "mz": 8077,
+        "villa": 34,
+        "propietario": "si",
+        "estado": "adeuda",
+        "estado_label": "ADEUDA",
+        "deuda": -40.0
+    },
+    {
+        "mz": 8077,
+        "villa": 35,
+        "propietario": "no",
+        "estado": "adeuda",
+        "estado_label": "ADEUDA",
+        "deuda": -40.0
+    },
+    {
+        "mz": 8077,
+        "villa": 36,
+        "propietario": "si",
+        "estado": "adeuda",
+        "estado_label": "ADEUDA",
+        "deuda": -25.0
+    },
+    {
+        "mz": 8077,
+        "villa": 37,
+        "propietario": "si",
+        "estado": "adeuda",
+        "estado_label": "ADEUDA",
+        "deuda": -24.98
+    },
+    {
+        "mz": 8077,
+        "villa": 38,
+        "propietario": "si",
+        "estado": "afavor",
+        "estado_label": "A FAVOR",
+        "deuda": 15.02
+    },
+    {
+        "mz": 8077,
+        "villa": 39,
+        "propietario": "si",
+        "estado": "adeuda",
+        "estado_label": "ADEUDA",
+        "deuda": -40.0
+    },
+    {
+        "mz": 8077,
+        "villa": 40,
+        "propietario": "si",
+        "estado": "afavor",
+        "estado_label": "A FAVOR",
+        "deuda": 15.0
+    },
+    {
+        "mz": 8077,
+        "villa": 41,
+        "propietario": "si",
+        "estado": "adeuda",
+        "estado_label": "ADEUDA",
+        "deuda": -40.0
+    },
+    {
+        "mz": 8077,
+        "villa": 42,
+        "propietario": "no",
+        "estado": "adeuda",
+        "estado_label": "ADEUDA",
+        "deuda": -40.0
+    },
+    {
+        "mz": 8078,
+        "villa": 1,
+        "propietario": "si",
+        "estado": "afavor",
+        "estado_label": "A FAVOR",
+        "deuda": 15.02
+    },
+    {
+        "mz": 8078,
+        "villa": 2,
+        "propietario": "si",
+        "estado": "adeuda",
+        "estado_label": "ADEUDA",
+        "deuda": -24.8
+    },
+    {
+        "mz": 8078,
+        "villa": 3,
+        "propietario": "si",
+        "estado": "cancelado",
+        "estado_label": "CANCELADO",
+        "deuda": 0.0
+    },
+    {
+        "mz": 8078,
+        "villa": 4,
+        "propietario": "si",
+        "estado": "adeuda",
+        "estado_label": "ADEUDA",
+        "deuda": -40.0
+    },
+    {
+        "mz": 8078,
+        "villa": 5,
+        "propietario": "si",
+        "estado": "afavor",
+        "estado_label": "A FAVOR",
+        "deuda": 15.0
+    },
+    {
+        "mz": 8078,
+        "villa": 6,
+        "propietario": "no",
+        "estado": "adeuda",
+        "estado_label": "ADEUDA",
+        "deuda": -40.0
+    },
+    {
+        "mz": 8078,
+        "villa": 7,
+        "propietario": "no",
+        "estado": "adeuda",
+        "estado_label": "ADEUDA",
+        "deuda": -40.0
+    },
+    {
+        "mz": 8078,
+        "villa": 8,
+        "propietario": "si",
+        "estado": "adeuda",
+        "estado_label": "ADEUDA",
+        "deuda": -24.95
+    },
+    {
+        "mz": 8078,
+        "villa": 9,
+        "propietario": "si",
+        "estado": "afavor",
+        "estado_label": "A FAVOR",
+        "deuda": 15.0
+    },
+    {
+        "mz": 8078,
+        "villa": 10,
+        "propietario": "no",
+        "estado": "adeuda",
+        "estado_label": "ADEUDA",
+        "deuda": -40.0
+    },
+    {
+        "mz": 8078,
+        "villa": 11,
+        "propietario": "no",
+        "estado": "adeuda",
+        "estado_label": "ADEUDA",
+        "deuda": -40.0
+    },
+    {
+        "mz": 8078,
+        "villa": 12,
+        "propietario": "no",
+        "estado": "adeuda",
+        "estado_label": "ADEUDA",
+        "deuda": -40.0
+    },
+    {
+        "mz": 8078,
+        "villa": 13,
+        "propietario": "si",
+        "estado": "adeuda",
+        "estado_label": "ADEUDA",
+        "deuda": -25.0
+    },
+    {
+        "mz": 8078,
+        "villa": 14,
+        "propietario": "si",
+        "estado": "afavor",
+        "estado_label": "A FAVOR",
+        "deuda": 15.0
+    },
+    {
+        "mz": 8078,
+        "villa": 15,
+        "propietario": "si",
+        "estado": "cancelado",
+        "estado_label": "CANCELADO",
+        "deuda": 0.0
+    },
+    {
+        "mz": 8078,
+        "villa": 16,
+        "propietario": "si",
+        "estado": "adeuda",
+        "estado_label": "ADEUDA",
+        "deuda": -40.0
+    },
+    {
+        "mz": 8078,
+        "villa": 17,
+        "propietario": "no",
+        "estado": "adeuda",
+        "estado_label": "ADEUDA",
+        "deuda": -40.0
+    },
+    {
+        "mz": 8078,
+        "villa": 18,
+        "propietario": "si",
+        "estado": "afavor",
+        "estado_label": "A FAVOR",
+        "deuda": 15.04
+    },
+    {
+        "mz": 8078,
+        "villa": 19,
+        "propietario": "si",
+        "estado": "afavor",
+        "estado_label": "A FAVOR",
+        "deuda": 16.0
+    },
+    {
+        "mz": 8078,
+        "villa": 20,
+        "propietario": "si",
+        "estado": "adeuda",
+        "estado_label": "ADEUDA",
+        "deuda": -28.0
+    },
+    {
+        "mz": 8078,
+        "villa": 21,
+        "propietario": "si",
+        "estado": "afavor",
+        "estado_label": "A FAVOR",
+        "deuda": 15.02
+    },
+    {
+        "mz": 8078,
+        "villa": 22,
+        "propietario": "si",
+        "estado": "adeuda",
+        "estado_label": "ADEUDA",
+        "deuda": -40.0
+    },
+    {
+        "mz": 8078,
+        "villa": 23,
+        "propietario": "no",
+        "estado": "adeuda",
+        "estado_label": "ADEUDA",
+        "deuda": -40.0
+    },
+    {
+        "mz": 8078,
+        "villa": 24,
+        "propietario": "no",
+        "estado": "adeuda",
+        "estado_label": "ADEUDA",
+        "deuda": -40.0
+    },
+    {
+        "mz": 8078,
+        "villa": 25,
+        "propietario": "si",
+        "estado": "adeuda",
+        "estado_label": "ADEUDA",
+        "deuda": -40.0
+    },
+    {
+        "mz": 8078,
+        "villa": 26,
+        "propietario": "no",
+        "estado": "adeuda",
+        "estado_label": "ADEUDA",
+        "deuda": -40.0
+    },
+    {
+        "mz": 8078,
+        "villa": 27,
+        "propietario": "si",
+        "estado": "adeuda",
+        "estado_label": "ADEUDA",
+        "deuda": -40.0
+    },
+    {
+        "mz": 8078,
+        "villa": 28,
+        "propietario": "no",
+        "estado": "adeuda",
+        "estado_label": "ADEUDA",
+        "deuda": -40.0
+    },
+    {
+        "mz": 8078,
+        "villa": 29,
+        "propietario": "no",
+        "estado": "adeuda",
+        "estado_label": "ADEUDA",
+        "deuda": -40.0
+    },
+    {
+        "mz": 8078,
+        "villa": 30,
+        "propietario": "si",
+        "estado": "cancelado",
+        "estado_label": "CANCELADO",
+        "deuda": 0.0
+    },
+    {
+        "mz": 8078,
+        "villa": 31,
+        "propietario": "si",
+        "estado": "adeuda",
+        "estado_label": "ADEUDA",
+        "deuda": -40.0
+    },
+    {
+        "mz": 8078,
+        "villa": 32,
+        "propietario": "no",
+        "estado": "adeuda",
+        "estado_label": "ADEUDA",
+        "deuda": -40.0
+    },
+    {
+        "mz": 8078,
+        "villa": 33,
+        "propietario": "si",
+        "estado": "afavor",
+        "estado_label": "A FAVOR",
+        "deuda": 15.0
+    },
+    {
+        "mz": 8078,
+        "villa": 34,
+        "propietario": "no",
+        "estado": "adeuda",
+        "estado_label": "ADEUDA",
+        "deuda": -40.0
+    },
+    {
+        "mz": 8078,
+        "villa": 35,
+        "propietario": "si",
+        "estado": "adeuda",
+        "estado_label": "ADEUDA",
+        "deuda": -25.0
+    },
+    {
+        "mz": 8078,
+        "villa": 36,
+        "propietario": "si",
+        "estado": "adeuda",
+        "estado_label": "ADEUDA",
+        "deuda": -40.0
+    },
+    {
+        "mz": 8078,
+        "villa": 37,
+        "propietario": "si",
+        "estado": "afavor",
+        "estado_label": "A FAVOR",
+        "deuda": 15.02
+    },
+    {
+        "mz": 8078,
+        "villa": 38,
+        "propietario": "si",
+        "estado": "adeuda",
+        "estado_label": "ADEUDA",
+        "deuda": -24.98
+    },
+    {
+        "mz": 8078,
+        "villa": 39,
+        "propietario": "no",
+        "estado": "adeuda",
+        "estado_label": "ADEUDA",
+        "deuda": -40.0
+    },
+    {
+        "mz": 8078,
+        "villa": 40,
+        "propietario": "no",
+        "estado": "adeuda",
+        "estado_label": "ADEUDA",
+        "deuda": -40.0
+    },
+    {
+        "mz": 8078,
+        "villa": 41,
+        "propietario": "no",
+        "estado": "adeuda",
+        "estado_label": "ADEUDA",
+        "deuda": -40.0
+    },
+    {
+        "mz": 8078,
+        "villa": 42,
+        "propietario": "no",
+        "estado": "adeuda",
+        "estado_label": "ADEUDA",
+        "deuda": -40.0
+    },
+    {
+        "mz": 8079,
+        "villa": 1,
+        "propietario": "si",
+        "estado": "adeuda",
+        "estado_label": "ADEUDA",
+        "deuda": -24.98
+    },
+    {
+        "mz": 8079,
+        "villa": 2,
+        "propietario": "si",
+        "estado": "adeuda",
+        "estado_label": "ADEUDA",
+        "deuda": -40.0
+    },
+    {
+        "mz": 8079,
+        "villa": 3,
+        "propietario": "si",
+        "estado": "adeuda",
+        "estado_label": "ADEUDA",
+        "deuda": -40.0
+    },
+    {
+        "mz": 8079,
+        "villa": 4,
+        "propietario": "si",
+        "estado": "afavor",
+        "estado_label": "A FAVOR",
+        "deuda": 15.0
+    },
+    {
+        "mz": 8079,
+        "villa": 5,
+        "propietario": "si",
+        "estado": "afavor",
+        "estado_label": "A FAVOR",
+        "deuda": 40.05
+    },
+    {
+        "mz": 8079,
+        "villa": 6,
+        "propietario": "si",
+        "estado": "adeuda",
+        "estado_label": "ADEUDA",
+        "deuda": -24.98
+    },
+    {
+        "mz": 8079,
+        "villa": 7,
+        "propietario": "no",
+        "estado": "adeuda",
+        "estado_label": "ADEUDA",
+        "deuda": -40.0
+    },
+    {
+        "mz": 8079,
+        "villa": 8,
+        "propietario": "no",
+        "estado": "adeuda",
+        "estado_label": "ADEUDA",
+        "deuda": -40.0
+    },
+    {
+        "mz": 8079,
+        "villa": 9,
+        "propietario": "si",
+        "estado": "adeuda",
+        "estado_label": "ADEUDA",
+        "deuda": -40.0
+    },
+    {
+        "mz": 8079,
+        "villa": 10,
+        "propietario": "si",
+        "estado": "adeuda",
+        "estado_label": "ADEUDA",
+        "deuda": -40.0
+    },
+    {
+        "mz": 8079,
+        "villa": 11,
+        "propietario": "si",
+        "estado": "afavor",
+        "estado_label": "A FAVOR",
+        "deuda": 15.03
+    },
+    {
+        "mz": 8079,
+        "villa": 12,
+        "propietario": "si",
+        "estado": "afavor",
+        "estado_label": "A FAVOR",
+        "deuda": 15.0
+    },
+    {
+        "mz": 8079,
+        "villa": 13,
+        "propietario": "si",
+        "estado": "afavor",
+        "estado_label": "A FAVOR",
+        "deuda": 15.0
+    },
+    {
+        "mz": 8079,
+        "villa": 14,
+        "propietario": "no",
+        "estado": "adeuda",
+        "estado_label": "ADEUDA",
+        "deuda": -40.0
+    },
+    {
+        "mz": 8079,
+        "villa": 15,
+        "propietario": "no",
+        "estado": "adeuda",
+        "estado_label": "ADEUDA",
+        "deuda": -40.0
+    },
+    {
+        "mz": 8079,
+        "villa": 16,
+        "propietario": "si",
+        "estado": "adeuda",
+        "estado_label": "ADEUDA",
+        "deuda": -40.0
+    },
+    {
+        "mz": 8079,
+        "villa": 17,
+        "propietario": "si",
+        "estado": "adeuda",
+        "estado_label": "ADEUDA",
+        "deuda": -40.0
+    },
+    {
+        "mz": 8079,
+        "villa": 18,
+        "propietario": "si",
+        "estado": "adeuda",
+        "estado_label": "ADEUDA",
+        "deuda": -40.0
+    },
+    {
+        "mz": 8079,
+        "villa": 19,
+        "propietario": "si",
+        "estado": "adeuda",
+        "estado_label": "ADEUDA",
+        "deuda": -24.98
+    },
+    {
+        "mz": 8079,
+        "villa": 20,
+        "propietario": "si",
+        "estado": "adeuda",
+        "estado_label": "ADEUDA",
+        "deuda": -40.0
+    },
+    {
+        "mz": 8079,
+        "villa": 21,
+        "propietario": "si",
+        "estado": "cancelado",
+        "estado_label": "CANCELADO",
+        "deuda": 0.0
+    },
+    {
+        "mz": 8079,
+        "villa": 22,
+        "propietario": "no",
+        "estado": "adeuda",
+        "estado_label": "ADEUDA",
+        "deuda": -40.0
+    },
+    {
+        "mz": 8079,
+        "villa": 23,
+        "propietario": "si",
+        "estado": "adeuda",
+        "estado_label": "ADEUDA",
+        "deuda": -40.0
+    },
+    {
+        "mz": 8079,
+        "villa": 24,
+        "propietario": "si",
+        "estado": "adeuda",
+        "estado_label": "ADEUDA",
+        "deuda": -40.0
+    },
+    {
+        "mz": 8079,
+        "villa": 25,
+        "propietario": "no",
+        "estado": "adeuda",
+        "estado_label": "ADEUDA",
+        "deuda": -40.0
+    },
+    {
+        "mz": 8079,
+        "villa": 26,
+        "propietario": "si",
+        "estado": "adeuda",
+        "estado_label": "ADEUDA",
+        "deuda": -40.0
+    },
+    {
+        "mz": 8079,
+        "villa": 27,
+        "propietario": "no",
+        "estado": "adeuda",
+        "estado_label": "ADEUDA",
+        "deuda": -40.0
+    },
+    {
+        "mz": 8079,
+        "villa": 28,
+        "propietario": "si",
+        "estado": "afavor",
+        "estado_label": "A FAVOR",
+        "deuda": 5.0
+    },
+    {
+        "mz": 8079,
+        "villa": 29,
+        "propietario": "si",
+        "estado": "adeuda",
+        "estado_label": "ADEUDA",
+        "deuda": -36.0
+    },
+    {
+        "mz": 8079,
+        "villa": 30,
+        "propietario": "no",
+        "estado": "adeuda",
+        "estado_label": "ADEUDA",
+        "deuda": -40.0
+    },
+    {
+        "mz": 8079,
+        "villa": 31,
+        "propietario": "si",
+        "estado": "afavor",
+        "estado_label": "A FAVOR",
+        "deuda": 15.0
+    },
+    {
+        "mz": 8079,
+        "villa": 32,
+        "propietario": "si",
+        "estado": "adeuda",
+        "estado_label": "ADEUDA",
+        "deuda": -40.0
+    },
+    {
+        "mz": 8079,
+        "villa": 33,
+        "propietario": "si",
+        "estado": "adeuda",
+        "estado_label": "ADEUDA",
+        "deuda": -24.98
+    },
+    {
+        "mz": 8079,
+        "villa": 34,
+        "propietario": "si",
+        "estado": "cancelado",
+        "estado_label": "CANCELADO",
+        "deuda": 0.0
+    },
+    {
+        "mz": 8079,
+        "villa": 35,
+        "propietario": "si",
+        "estado": "afavor",
+        "estado_label": "A FAVOR",
+        "deuda": 20.0
+    },
+    {
+        "mz": 8079,
+        "villa": 36,
+        "propietario": "si",
+        "estado": "afavor",
+        "estado_label": "A FAVOR",
+        "deuda": 15.0
+    },
+    {
+        "mz": 8079,
+        "villa": 37,
+        "propietario": "si",
+        "estado": "adeuda",
+        "estado_label": "ADEUDA",
+        "deuda": -40.0
+    },
+    {
+        "mz": 8079,
+        "villa": 38,
+        "propietario": "no",
+        "estado": "adeuda",
+        "estado_label": "ADEUDA",
+        "deuda": -40.0
+    },
+    {
+        "mz": 8079,
+        "villa": 39,
+        "propietario": "si",
+        "estado": "afavor",
+        "estado_label": "A FAVOR",
+        "deuda": 15.0
+    },
+    {
+        "mz": 8079,
+        "villa": 40,
+        "propietario": "si",
+        "estado": "afavor",
+        "estado_label": "A FAVOR",
+        "deuda": 15.02
+    },
+    {
+        "mz": 8079,
+        "villa": 41,
+        "propietario": "si",
+        "estado": "adeuda",
+        "estado_label": "ADEUDA",
+        "deuda": -40.0
+    },
+    {
+        "mz": 8079,
+        "villa": 42,
+        "propietario": "si",
+        "estado": "adeuda",
+        "estado_label": "ADEUDA",
+        "deuda": -25.0
+    },
+    {
+        "mz": 8080,
+        "villa": 1,
+        "propietario": "si",
+        "estado": "afavor",
+        "estado_label": "A FAVOR",
+        "deuda": 15.0
+    },
+    {
+        "mz": 8080,
+        "villa": 2,
+        "propietario": "si",
+        "estado": "cancelado",
+        "estado_label": "CANCELADO",
+        "deuda": 0.0
+    },
+    {
+        "mz": 8080,
+        "villa": 3,
+        "propietario": "si",
+        "estado": "adeuda",
+        "estado_label": "ADEUDA",
+        "deuda": -40.0
+    },
+    {
+        "mz": 8080,
+        "villa": 4,
+        "propietario": "si",
+        "estado": "cancelado",
+        "estado_label": "CANCELADO",
+        "deuda": 0.0
+    },
+    {
+        "mz": 8080,
+        "villa": 5,
+        "propietario": "si",
+        "estado": "adeuda",
+        "estado_label": "ADEUDA",
+        "deuda": -40.0
+    },
+    {
+        "mz": 8080,
+        "villa": 6,
+        "propietario": "si",
+        "estado": "adeuda",
+        "estado_label": "ADEUDA",
+        "deuda": -40.0
+    },
+    {
+        "mz": 8080,
+        "villa": 7,
+        "propietario": "si",
+        "estado": "afavor",
+        "estado_label": "A FAVOR",
+        "deuda": 15.02
+    },
+    {
+        "mz": 8080,
+        "villa": 8,
+        "propietario": "si",
+        "estado": "adeuda",
+        "estado_label": "ADEUDA",
+        "deuda": -40.0
+    },
+    {
+        "mz": 8080,
+        "villa": 9,
+        "propietario": "si",
+        "estado": "afavor",
+        "estado_label": "A FAVOR",
+        "deuda": 15.02
+    },
+    {
+        "mz": 8080,
+        "villa": 10,
+        "propietario": "si",
+        "estado": "adeuda",
+        "estado_label": "ADEUDA",
+        "deuda": -24.0
+    },
+    {
+        "mz": 8080,
+        "villa": 11,
+        "propietario": "si",
+        "estado": "afavor",
+        "estado_label": "A FAVOR",
+        "deuda": 13.0
+    },
+    {
+        "mz": 8080,
+        "villa": 12,
+        "propietario": "si",
+        "estado": "afavor",
+        "estado_label": "A FAVOR",
+        "deuda": 15.02
+    },
+    {
+        "mz": 8080,
+        "villa": 13,
+        "propietario": "si",
+        "estado": "adeuda",
+        "estado_label": "ADEUDA",
+        "deuda": -40.0
+    },
+    {
+        "mz": 8080,
+        "villa": 14,
+        "propietario": "si",
+        "estado": "adeuda",
+        "estado_label": "ADEUDA",
+        "deuda": -40.0
+    },
+    {
+        "mz": 8080,
+        "villa": 15,
+        "propietario": "si",
+        "estado": "afavor",
+        "estado_label": "A FAVOR",
+        "deuda": 15.02
+    },
+    {
+        "mz": 8080,
+        "villa": 16,
+        "propietario": "no",
+        "estado": "adeuda",
+        "estado_label": "ADEUDA",
+        "deuda": -40.0
+    },
+    {
+        "mz": 8080,
+        "villa": 17,
+        "propietario": "no",
+        "estado": "adeuda",
+        "estado_label": "ADEUDA",
+        "deuda": -40.0
+    },
+    {
+        "mz": 8080,
+        "villa": 18,
+        "propietario": "si",
+        "estado": "adeuda",
+        "estado_label": "ADEUDA",
+        "deuda": -36.95
+    },
+    {
+        "mz": 8080,
+        "villa": 19,
+        "propietario": "si",
+        "estado": "afavor",
+        "estado_label": "A FAVOR",
+        "deuda": 15.02
+    },
+    {
+        "mz": 8080,
+        "villa": 20,
+        "propietario": "no",
+        "estado": "adeuda",
+        "estado_label": "ADEUDA",
+        "deuda": -40.0
+    },
+    {
+        "mz": 8080,
+        "villa": 21,
+        "propietario": "si",
+        "estado": "adeuda",
+        "estado_label": "ADEUDA",
+        "deuda": -40.0
+    },
+    {
+        "mz": 8080,
+        "villa": 22,
+        "propietario": "no",
+        "estado": "adeuda",
+        "estado_label": "ADEUDA",
+        "deuda": -40.0
+    },
+    {
+        "mz": 8080,
+        "villa": 23,
+        "propietario": "si",
+        "estado": "cancelado",
+        "estado_label": "CANCELADO",
+        "deuda": 0.0
+    },
+    {
+        "mz": 8080,
+        "villa": 24,
+        "propietario": "si",
+        "estado": "cancelado",
+        "estado_label": "CANCELADO",
+        "deuda": 0.0
+    },
+    {
+        "mz": 8080,
+        "villa": 25,
+        "propietario": "no",
+        "estado": "adeuda",
+        "estado_label": "ADEUDA",
+        "deuda": -40.0
+    },
+    {
+        "mz": 8080,
+        "villa": 26,
+        "propietario": "si",
+        "estado": "afavor",
+        "estado_label": "A FAVOR",
+        "deuda": 15.02
+    },
+    {
+        "mz": 8080,
+        "villa": 27,
+        "propietario": "no",
+        "estado": "adeuda",
+        "estado_label": "ADEUDA",
+        "deuda": -40.0
+    },
+    {
+        "mz": 8080,
+        "villa": 28,
+        "propietario": "si",
+        "estado": "adeuda",
+        "estado_label": "ADEUDA",
+        "deuda": -24.97
+    },
+    {
+        "mz": 8080,
+        "villa": 29,
+        "propietario": "si",
+        "estado": "adeuda",
+        "estado_label": "ADEUDA",
+        "deuda": -25.0
+    },
+    {
+        "mz": 8080,
+        "villa": 30,
+        "propietario": "no",
+        "estado": "adeuda",
+        "estado_label": "ADEUDA",
+        "deuda": -40.0
+    },
+    {
+        "mz": 8080,
+        "villa": 31,
+        "propietario": "no",
+        "estado": "adeuda",
+        "estado_label": "ADEUDA",
+        "deuda": -40.0
+    },
+    {
+        "mz": 8080,
+        "villa": 32,
+        "propietario": "si",
+        "estado": "adeuda",
+        "estado_label": "ADEUDA",
+        "deuda": -40.0
+    },
+    {
+        "mz": 8080,
+        "villa": 33,
+        "propietario": "si",
+        "estado": "adeuda",
+        "estado_label": "ADEUDA",
+        "deuda": -40.0
+    },
+    {
+        "mz": 8080,
+        "villa": 34,
+        "propietario": "no",
+        "estado": "adeuda",
+        "estado_label": "ADEUDA",
+        "deuda": -40.0
+    },
+    {
+        "mz": 8080,
+        "villa": 35,
+        "propietario": "si",
+        "estado": "adeuda",
+        "estado_label": "ADEUDA",
+        "deuda": -40.0
+    },
+    {
+        "mz": 8080,
+        "villa": 36,
+        "propietario": "no",
+        "estado": "adeuda",
+        "estado_label": "ADEUDA",
+        "deuda": -40.0
+    },
+    {
+        "mz": 8080,
+        "villa": 37,
+        "propietario": "si",
+        "estado": "afavor",
+        "estado_label": "A FAVOR",
+        "deuda": 15.05
+    },
+    {
+        "mz": 8080,
+        "villa": 38,
+        "propietario": "si",
+        "estado": "adeuda",
+        "estado_label": "ADEUDA",
+        "deuda": -40.0
+    },
+    {
+        "mz": 8080,
+        "villa": 39,
+        "propietario": "no",
+        "estado": "adeuda",
+        "estado_label": "ADEUDA",
+        "deuda": -40.0
+    },
+    {
+        "mz": 8080,
+        "villa": 40,
+        "propietario": "si",
+        "estado": "adeuda",
+        "estado_label": "ADEUDA",
+        "deuda": -40.0
+    },
+    {
+        "mz": 8080,
+        "villa": 41,
+        "propietario": "si",
+        "estado": "adeuda",
+        "estado_label": "ADEUDA",
+        "deuda": -40.0
+    },
+    {
+        "mz": 8080,
+        "villa": 42,
+        "propietario": "no",
+        "estado": "adeuda",
+        "estado_label": "ADEUDA",
+        "deuda": -40.0
+    },
+    {
+        "mz": 8081,
+        "villa": 1,
+        "propietario": "si",
+        "estado": "afavor",
+        "estado_label": "A FAVOR",
+        "deuda": 15.0
+    },
+    {
+        "mz": 8081,
+        "villa": 2,
+        "propietario": "no",
+        "estado": "adeuda",
+        "estado_label": "ADEUDA",
+        "deuda": -40.0
+    },
+    {
+        "mz": 8081,
+        "villa": 3,
+        "propietario": "si",
+        "estado": "adeuda",
+        "estado_label": "ADEUDA",
+        "deuda": -40.0
+    },
+    {
+        "mz": 8081,
+        "villa": 4,
+        "propietario": "no",
+        "estado": "adeuda",
+        "estado_label": "ADEUDA",
+        "deuda": -40.0
+    },
+    {
+        "mz": 8081,
+        "villa": 5,
+        "propietario": "si",
+        "estado": "adeuda",
+        "estado_label": "ADEUDA",
+        "deuda": -40.0
+    },
+    {
+        "mz": 8081,
+        "villa": 6,
+        "propietario": "si",
+        "estado": "adeuda",
+        "estado_label": "ADEUDA",
+        "deuda": -40.0
+    },
+    {
+        "mz": 8081,
+        "villa": 7,
+        "propietario": "no",
+        "estado": "adeuda",
+        "estado_label": "ADEUDA",
+        "deuda": -40.0
+    },
+    {
+        "mz": 8081,
+        "villa": 8,
+        "propietario": "no",
+        "estado": "adeuda",
+        "estado_label": "ADEUDA",
+        "deuda": -40.0
+    },
+    {
+        "mz": 8081,
+        "villa": 9,
+        "propietario": "no",
+        "estado": "adeuda",
+        "estado_label": "ADEUDA",
+        "deuda": -40.0
+    },
+    {
+        "mz": 8081,
+        "villa": 10,
+        "propietario": "no",
+        "estado": "adeuda",
+        "estado_label": "ADEUDA",
+        "deuda": -40.0
+    },
+    {
+        "mz": 8081,
+        "villa": 11,
+        "propietario": "no",
+        "estado": "adeuda",
+        "estado_label": "ADEUDA",
+        "deuda": -40.0
+    },
+    {
+        "mz": 8081,
+        "villa": 12,
+        "propietario": "si",
+        "estado": "afavor",
+        "estado_label": "A FAVOR",
+        "deuda": 15.0
+    },
+    {
+        "mz": 8081,
+        "villa": 13,
+        "propietario": "si",
+        "estado": "adeuda",
+        "estado_label": "ADEUDA",
+        "deuda": -25.0
+    },
+    {
+        "mz": 8081,
+        "villa": 14,
+        "propietario": "si",
+        "estado": "adeuda",
+        "estado_label": "ADEUDA",
+        "deuda": -25.0
+    },
+    {
+        "mz": 8081,
+        "villa": 15,
+        "propietario": "si",
+        "estado": "afavor",
+        "estado_label": "A FAVOR",
+        "deuda": 15.02
+    },
+    {
+        "mz": 8081,
+        "villa": 16,
+        "propietario": "si",
+        "estado": "afavor",
+        "estado_label": "A FAVOR",
+        "deuda": 15.0
+    },
+    {
+        "mz": 8081,
+        "villa": 17,
+        "propietario": "no",
+        "estado": "adeuda",
+        "estado_label": "ADEUDA",
+        "deuda": -40.0
+    },
+    {
+        "mz": 8081,
+        "villa": 18,
+        "propietario": "no",
+        "estado": "adeuda",
+        "estado_label": "ADEUDA",
+        "deuda": -40.0
+    },
+    {
+        "mz": 8081,
+        "villa": 19,
+        "propietario": "no",
+        "estado": "adeuda",
+        "estado_label": "ADEUDA",
+        "deuda": -40.0
+    },
+    {
+        "mz": 8081,
+        "villa": 20,
+        "propietario": "si",
+        "estado": "adeuda",
+        "estado_label": "ADEUDA",
+        "deuda": -40.0
+    },
+    {
+        "mz": 8081,
+        "villa": 21,
+        "propietario": "si",
+        "estado": "adeuda",
+        "estado_label": "ADEUDA",
+        "deuda": -40.0
+    },
+    {
+        "mz": 8081,
+        "villa": 22,
+        "propietario": "si",
+        "estado": "adeuda",
+        "estado_label": "ADEUDA",
+        "deuda": -24.98
+    },
+    {
+        "mz": 8081,
+        "villa": 23,
+        "propietario": "si",
+        "estado": "adeuda",
+        "estado_label": "ADEUDA",
+        "deuda": -40.0
+    },
+    {
+        "mz": 8081,
+        "villa": 24,
+        "propietario": "si",
+        "estado": "afavor",
+        "estado_label": "A FAVOR",
+        "deuda": 15.02
+    },
+    {
+        "mz": 8081,
+        "villa": 25,
+        "propietario": "si",
+        "estado": "adeuda",
+        "estado_label": "ADEUDA",
+        "deuda": -40.0
+    },
+    {
+        "mz": 8081,
+        "villa": 26,
+        "propietario": "si",
+        "estado": "afavor",
+        "estado_label": "A FAVOR",
+        "deuda": 15.0
+    },
+    {
+        "mz": 8081,
+        "villa": 27,
+        "propietario": "no",
+        "estado": "adeuda",
+        "estado_label": "ADEUDA",
+        "deuda": -40.0
+    },
+    {
+        "mz": 8081,
+        "villa": 28,
+        "propietario": "no",
+        "estado": "adeuda",
+        "estado_label": "ADEUDA",
+        "deuda": -40.0
+    },
+    {
+        "mz": 8081,
+        "villa": 29,
+        "propietario": "si",
+        "estado": "afavor",
+        "estado_label": "A FAVOR",
+        "deuda": 15.0
+    },
+    {
+        "mz": 8081,
+        "villa": 30,
+        "propietario": "si",
+        "estado": "adeuda",
+        "estado_label": "ADEUDA",
+        "deuda": -40.0
+    },
+    {
+        "mz": 8081,
+        "villa": 31,
+        "propietario": "no",
+        "estado": "adeuda",
+        "estado_label": "ADEUDA",
+        "deuda": -40.0
+    },
+    {
+        "mz": 8081,
+        "villa": 32,
+        "propietario": "si",
+        "estado": "cancelado",
+        "estado_label": "CANCELADO",
+        "deuda": 0.0
+    },
+    {
+        "mz": 8081,
+        "villa": 33,
+        "propietario": "si",
+        "estado": "adeuda",
+        "estado_label": "ADEUDA",
+        "deuda": -24.98
+    },
+    {
+        "mz": 8081,
+        "villa": 34,
+        "propietario": "no",
+        "estado": "adeuda",
+        "estado_label": "ADEUDA",
+        "deuda": -40.0
+    },
+    {
+        "mz": 8081,
+        "villa": 35,
+        "propietario": "si",
+        "estado": "adeuda",
+        "estado_label": "ADEUDA",
+        "deuda": -40.0
+    },
+    {
+        "mz": 8081,
+        "villa": 36,
+        "propietario": "si",
+        "estado": "adeuda",
+        "estado_label": "ADEUDA",
+        "deuda": -40.0
+    },
+    {
+        "mz": 8081,
+        "villa": 37,
+        "propietario": "si",
+        "estado": "adeuda",
+        "estado_label": "ADEUDA",
+        "deuda": -40.0
+    },
+    {
+        "mz": 8081,
+        "villa": 38,
+        "propietario": "si",
+        "estado": "adeuda",
+        "estado_label": "ADEUDA",
+        "deuda": -25.0
+    },
+    {
+        "mz": 8081,
+        "villa": 39,
+        "propietario": "si",
+        "estado": "afavor",
+        "estado_label": "A FAVOR",
+        "deuda": 15.0
+    },
+    {
+        "mz": 8081,
+        "villa": 40,
+        "propietario": "si",
+        "estado": "afavor",
+        "estado_label": "A FAVOR",
+        "deuda": 15.02
+    },
+    {
+        "mz": 8081,
+        "villa": 41,
+        "propietario": "no",
+        "estado": "adeuda",
+        "estado_label": "ADEUDA",
+        "deuda": -40.0
+    },
+    {
+        "mz": 8081,
+        "villa": 42,
+        "propietario": "si",
+        "estado": "adeuda",
+        "estado_label": "ADEUDA",
+        "deuda": -25.0
+    },
+    {
+        "mz": 8082,
+        "villa": 1,
+        "propietario": "no",
+        "estado": "adeuda",
+        "estado_label": "ADEUDA",
+        "deuda": -40.0
+    },
+    {
+        "mz": 8082,
+        "villa": 2,
+        "propietario": "si",
+        "estado": "adeuda",
+        "estado_label": "ADEUDA",
+        "deuda": -25.0
+    },
+    {
+        "mz": 8082,
+        "villa": 3,
+        "propietario": "si",
+        "estado": "adeuda",
+        "estado_label": "ADEUDA",
+        "deuda": -40.0
+    },
+    {
+        "mz": 8082,
+        "villa": 4,
+        "propietario": "si",
+        "estado": "adeuda",
+        "estado_label": "ADEUDA",
+        "deuda": -40.0
+    },
+    {
+        "mz": 8082,
+        "villa": 5,
+        "propietario": "si",
+        "estado": "afavor",
+        "estado_label": "A FAVOR",
+        "deuda": 15.1
+    },
+    {
+        "mz": 8082,
+        "villa": 6,
+        "propietario": "si",
+        "estado": "adeuda",
+        "estado_label": "ADEUDA",
+        "deuda": -25.0
+    },
+    {
+        "mz": 8082,
+        "villa": 7,
+        "propietario": "si",
+        "estado": "adeuda",
+        "estado_label": "ADEUDA",
+        "deuda": -40.0
+    },
+    {
+        "mz": 8082,
+        "villa": 8,
+        "propietario": "si",
+        "estado": "adeuda",
+        "estado_label": "ADEUDA",
+        "deuda": -40.0
+    },
+    {
+        "mz": 8082,
+        "villa": 9,
+        "propietario": "si",
+        "estado": "adeuda",
+        "estado_label": "ADEUDA",
+        "deuda": -25.0
+    },
+    {
+        "mz": 8082,
+        "villa": 10,
+        "propietario": "si",
+        "estado": "adeuda",
+        "estado_label": "ADEUDA",
+        "deuda": -40.0
+    },
+    {
+        "mz": 8082,
+        "villa": 11,
+        "propietario": "si",
+        "estado": "adeuda",
+        "estado_label": "ADEUDA",
+        "deuda": -40.0
+    },
+    {
+        "mz": 8082,
+        "villa": 12,
+        "propietario": "si",
+        "estado": "cancelado",
+        "estado_label": "CANCELADO",
+        "deuda": 0.0
+    },
+    {
+        "mz": 8082,
+        "villa": 13,
+        "propietario": "si",
+        "estado": "afavor",
+        "estado_label": "A FAVOR",
+        "deuda": 15.0
+    },
+    {
+        "mz": 8082,
+        "villa": 14,
+        "propietario": "si",
+        "estado": "afavor",
+        "estado_label": "A FAVOR",
+        "deuda": 15.0
+    },
+    {
+        "mz": 8082,
+        "villa": 15,
+        "propietario": "si",
+        "estado": "afavor",
+        "estado_label": "A FAVOR",
+        "deuda": 14.02
+    },
+    {
+        "mz": 8082,
+        "villa": 16,
+        "propietario": "si",
+        "estado": "adeuda",
+        "estado_label": "ADEUDA",
+        "deuda": -40.0
+    },
+    {
+        "mz": 8082,
+        "villa": 17,
+        "propietario": "si",
+        "estado": "adeuda",
+        "estado_label": "ADEUDA",
+        "deuda": -25.0
+    },
+    {
+        "mz": 8082,
+        "villa": 18,
+        "propietario": "si",
+        "estado": "adeuda",
+        "estado_label": "ADEUDA",
+        "deuda": -24.98
+    },
+    {
+        "mz": 8082,
+        "villa": 19,
+        "propietario": "si",
+        "estado": "adeuda",
+        "estado_label": "ADEUDA",
+        "deuda": -40.0
+    },
+    {
+        "mz": 8082,
+        "villa": 20,
+        "propietario": "no",
+        "estado": "adeuda",
+        "estado_label": "ADEUDA",
+        "deuda": -40.0
+    },
+    {
+        "mz": 8082,
+        "villa": 21,
+        "propietario": "si",
+        "estado": "adeuda",
+        "estado_label": "ADEUDA",
+        "deuda": -40.0
+    },
+    {
+        "mz": 8082,
+        "villa": 22,
+        "propietario": "si",
+        "estado": "afavor",
+        "estado_label": "A FAVOR",
+        "deuda": 15.05
+    },
+    {
+        "mz": 8082,
+        "villa": 23,
+        "propietario": "si",
+        "estado": "afavor",
+        "estado_label": "A FAVOR",
+        "deuda": 15.02
+    },
+    {
+        "mz": 8082,
+        "villa": 24,
+        "propietario": "si",
+        "estado": "afavor",
+        "estado_label": "A FAVOR",
+        "deuda": 15.02
+    },
+    {
+        "mz": 8082,
+        "villa": 25,
+        "propietario": "no",
+        "estado": "adeuda",
+        "estado_label": "ADEUDA",
+        "deuda": -40.0
+    },
+    {
+        "mz": 8082,
+        "villa": 26,
+        "propietario": "no",
+        "estado": "adeuda",
+        "estado_label": "ADEUDA",
+        "deuda": -40.0
+    },
+    {
+        "mz": 8082,
+        "villa": 27,
+        "propietario": "si",
+        "estado": "adeuda",
+        "estado_label": "ADEUDA",
+        "deuda": -40.0
+    },
+    {
+        "mz": 8082,
+        "villa": 28,
+        "propietario": "si",
+        "estado": "adeuda",
+        "estado_label": "ADEUDA",
+        "deuda": -40.0
+    },
+    {
+        "mz": 8082,
+        "villa": 29,
+        "propietario": "si",
+        "estado": "afavor",
+        "estado_label": "A FAVOR",
+        "deuda": 15.02
+    },
+    {
+        "mz": 8082,
+        "villa": 30,
+        "propietario": "si",
+        "estado": "adeuda",
+        "estado_label": "ADEUDA",
+        "deuda": -40.0
+    },
+    {
+        "mz": 8082,
+        "villa": 31,
+        "propietario": "si",
+        "estado": "adeuda",
+        "estado_label": "ADEUDA",
+        "deuda": -40.0
+    },
+    {
+        "mz": 8082,
+        "villa": 32,
+        "propietario": "si",
+        "estado": "cancelado",
+        "estado_label": "CANCELADO",
+        "deuda": 0.0
+    },
+    {
+        "mz": 8082,
+        "villa": 33,
+        "propietario": "si",
+        "estado": "cancelado",
+        "estado_label": "CANCELADO",
+        "deuda": 0.0
+    },
+    {
+        "mz": 8082,
+        "villa": 34,
+        "propietario": "si",
+        "estado": "adeuda",
+        "estado_label": "ADEUDA",
+        "deuda": -25.0
+    },
+    {
+        "mz": 8082,
+        "villa": 35,
+        "propietario": "si",
+        "estado": "adeuda",
+        "estado_label": "ADEUDA",
+        "deuda": -40.0
+    },
+    {
+        "mz": 8082,
+        "villa": 36,
+        "propietario": "si",
+        "estado": "cancelado",
+        "estado_label": "CANCELADO",
+        "deuda": 0.0
+    },
+    {
+        "mz": 8082,
+        "villa": 37,
+        "propietario": "si",
+        "estado": "adeuda",
+        "estado_label": "ADEUDA",
+        "deuda": -40.0
+    },
+    {
+        "mz": 8082,
+        "villa": 38,
+        "propietario": "si",
+        "estado": "adeuda",
+        "estado_label": "ADEUDA",
+        "deuda": -25.0
+    },
+    {
+        "mz": 8082,
+        "villa": 39,
+        "propietario": "si",
+        "estado": "adeuda",
+        "estado_label": "ADEUDA",
+        "deuda": -24.98
+    },
+    {
+        "mz": 8082,
+        "villa": 40,
+        "propietario": "si",
+        "estado": "afavor",
+        "estado_label": "A FAVOR",
+        "deuda": 20.0
+    },
+    {
+        "mz": 8082,
+        "villa": 41,
+        "propietario": "si",
+        "estado": "cancelado",
+        "estado_label": "CANCELADO",
+        "deuda": 0.0
+    },
+    {
+        "mz": 8082,
+        "villa": 42,
+        "propietario": "si",
+        "estado": "adeuda",
+        "estado_label": "ADEUDA",
+        "deuda": -40.0
+    },
+    {
+        "mz": 8083,
+        "villa": 1,
+        "propietario": "si",
+        "estado": "afavor",
+        "estado_label": "A FAVOR",
+        "deuda": 15.0
+    },
+    {
+        "mz": 8083,
+        "villa": 2,
+        "propietario": "no",
+        "estado": "adeuda",
+        "estado_label": "ADEUDA",
+        "deuda": -40.0
+    },
+    {
+        "mz": 8083,
+        "villa": 3,
+        "propietario": "no",
+        "estado": "adeuda",
+        "estado_label": "ADEUDA",
+        "deuda": -40.0
+    },
+    {
+        "mz": 8083,
+        "villa": 4,
+        "propietario": "no",
+        "estado": "adeuda",
+        "estado_label": "ADEUDA",
+        "deuda": -40.0
+    },
+    {
+        "mz": 8083,
+        "villa": 5,
+        "propietario": "no",
+        "estado": "adeuda",
+        "estado_label": "ADEUDA",
+        "deuda": -40.0
+    },
+    {
+        "mz": 8083,
+        "villa": 6,
+        "propietario": "no",
+        "estado": "adeuda",
+        "estado_label": "ADEUDA",
+        "deuda": -40.0
+    },
+    {
+        "mz": 8083,
+        "villa": 7,
+        "propietario": "si",
+        "estado": "adeuda",
+        "estado_label": "ADEUDA",
+        "deuda": -40.0
+    },
+    {
+        "mz": 8083,
+        "villa": 8,
+        "propietario": "si",
+        "estado": "adeuda",
+        "estado_label": "ADEUDA",
+        "deuda": -40.0
+    },
+    {
+        "mz": 8083,
+        "villa": 9,
+        "propietario": "si",
+        "estado": "adeuda",
+        "estado_label": "ADEUDA",
+        "deuda": -40.0
+    },
+    {
+        "mz": 8083,
+        "villa": 10,
+        "propietario": "si",
+        "estado": "adeuda",
+        "estado_label": "ADEUDA",
+        "deuda": -40.0
+    },
+    {
+        "mz": 8083,
+        "villa": 11,
+        "propietario": "si",
+        "estado": "afavor",
+        "estado_label": "A FAVOR",
+        "deuda": 15.02
+    },
+    {
+        "mz": 8083,
+        "villa": 12,
+        "propietario": "si",
+        "estado": "afavor",
+        "estado_label": "A FAVOR",
+        "deuda": 15.02
+    },
+    {
+        "mz": 8083,
+        "villa": 13,
+        "propietario": "si",
+        "estado": "adeuda",
+        "estado_label": "ADEUDA",
+        "deuda": -25.0
+    },
+    {
+        "mz": 8083,
+        "villa": 14,
+        "propietario": "si",
+        "estado": "cancelado",
+        "estado_label": "CANCELADO",
+        "deuda": 0.0
+    },
+    {
+        "mz": 8083,
+        "villa": 15,
+        "propietario": "si",
+        "estado": "cancelado",
+        "estado_label": "CANCELADO",
+        "deuda": 0.0
+    },
+    {
+        "mz": 8083,
+        "villa": 16,
+        "propietario": "no",
+        "estado": "adeuda",
+        "estado_label": "ADEUDA",
+        "deuda": -40.0
+    },
+    {
+        "mz": 8083,
+        "villa": 17,
+        "propietario": "no",
+        "estado": "adeuda",
+        "estado_label": "ADEUDA",
+        "deuda": -40.0
+    },
+    {
+        "mz": 8083,
+        "villa": 18,
+        "propietario": "no",
+        "estado": "adeuda",
+        "estado_label": "ADEUDA",
+        "deuda": -40.0
+    },
+    {
+        "mz": 8083,
+        "villa": 19,
+        "propietario": "no",
+        "estado": "adeuda",
+        "estado_label": "ADEUDA",
+        "deuda": -40.0
+    },
+    {
+        "mz": 8083,
+        "villa": 20,
+        "propietario": "si",
+        "estado": "adeuda",
+        "estado_label": "ADEUDA",
+        "deuda": -40.0
+    },
+    {
+        "mz": 8083,
+        "villa": 21,
+        "propietario": "si",
+        "estado": "afavor",
+        "estado_label": "A FAVOR",
+        "deuda": 15.02
+    },
+    {
+        "mz": 8083,
+        "villa": 22,
+        "propietario": "si",
+        "estado": "afavor",
+        "estado_label": "A FAVOR",
+        "deuda": 15.02
+    },
+    {
+        "mz": 8084,
+        "villa": 1,
+        "propietario": "si",
+        "estado": "afavor",
+        "estado_label": "A FAVOR",
+        "deuda": 15.02
+    },
+    {
+        "mz": 8084,
+        "villa": 2,
+        "propietario": "si",
+        "estado": "adeuda",
+        "estado_label": "ADEUDA",
+        "deuda": -40.0
+    },
+    {
+        "mz": 8084,
+        "villa": 3,
+        "propietario": "si",
+        "estado": "afavor",
+        "estado_label": "A FAVOR",
+        "deuda": 15.0
+    },
+    {
+        "mz": 8084,
+        "villa": 4,
+        "propietario": "si",
+        "estado": "afavor",
+        "estado_label": "A FAVOR",
+        "deuda": 15.0
+    },
+    {
+        "mz": 8084,
+        "villa": 5,
+        "propietario": "si",
+        "estado": "afavor",
+        "estado_label": "A FAVOR",
+        "deuda": 19.02
+    },
+    {
+        "mz": 8084,
+        "villa": 6,
+        "propietario": "si",
+        "estado": "adeuda",
+        "estado_label": "ADEUDA",
+        "deuda": -40.0
+    },
+    {
+        "mz": 8084,
+        "villa": 7,
+        "propietario": "si",
+        "estado": "adeuda",
+        "estado_label": "ADEUDA",
+        "deuda": -24.98
+    },
+    {
+        "mz": 8084,
+        "villa": 8,
+        "propietario": "si",
+        "estado": "afavor",
+        "estado_label": "A FAVOR",
+        "deuda": 15.0
+    },
+    {
+        "mz": 8084,
+        "villa": 9,
+        "propietario": "si",
+        "estado": "afavor",
+        "estado_label": "A FAVOR",
+        "deuda": 15.0
+    },
+    {
+        "mz": 8084,
+        "villa": 10,
+        "propietario": "no",
+        "estado": "adeuda",
+        "estado_label": "ADEUDA",
+        "deuda": -40.0
+    },
+    {
+        "mz": 8084,
+        "villa": 11,
+        "propietario": "no",
+        "estado": "adeuda",
+        "estado_label": "ADEUDA",
+        "deuda": -40.0
+    },
+    {
+        "mz": 8084,
+        "villa": 12,
+        "propietario": "si",
+        "estado": "adeuda",
+        "estado_label": "ADEUDA",
+        "deuda": -40.0
+    },
+    {
+        "mz": 8084,
+        "villa": 13,
+        "propietario": "si",
+        "estado": "cancelado",
+        "estado_label": "CANCELADO",
+        "deuda": 0.0
+    },
+    {
+        "mz": 8084,
+        "villa": 14,
+        "propietario": "si",
+        "estado": "cancelado",
+        "estado_label": "CANCELADO",
+        "deuda": 0.0
+    },
+    {
+        "mz": 8084,
+        "villa": 15,
+        "propietario": "si",
+        "estado": "afavor",
+        "estado_label": "A FAVOR",
+        "deuda": 15.02
+    },
+    {
+        "mz": 8084,
+        "villa": 16,
+        "propietario": "si",
+        "estado": "afavor",
+        "estado_label": "A FAVOR",
+        "deuda": 5.0
+    },
+    {
+        "mz": 8084,
+        "villa": 17,
+        "propietario": "no",
+        "estado": "adeuda",
+        "estado_label": "ADEUDA",
+        "deuda": -40.0
+    },
+    {
+        "mz": 8084,
+        "villa": 18,
+        "propietario": "si",
+        "estado": "adeuda",
+        "estado_label": "ADEUDA",
+        "deuda": -40.0
+    },
+    {
+        "mz": 8084,
+        "villa": 19,
+        "propietario": "no",
+        "estado": "adeuda",
+        "estado_label": "ADEUDA",
+        "deuda": -40.0
+    },
+    {
+        "mz": 8084,
+        "villa": 20,
+        "propietario": "si",
+        "estado": "afavor",
+        "estado_label": "A FAVOR",
+        "deuda": 15.02
+    },
+    {
+        "mz": 8084,
+        "villa": 21,
+        "propietario": "no",
+        "estado": "adeuda",
+        "estado_label": "ADEUDA",
+        "deuda": -40.0
+    },
+    {
+        "mz": 8084,
+        "villa": 22,
+        "propietario": "si",
+        "estado": "adeuda",
+        "estado_label": "ADEUDA",
+        "deuda": -40.0
+    },
+    {
+        "mz": 8085,
+        "villa": 1,
+        "propietario": "si",
+        "estado": "afavor",
+        "estado_label": "A FAVOR",
+        "deuda": 15.0
+    },
+    {
+        "mz": 8085,
+        "villa": 2,
+        "propietario": "si",
+        "estado": "adeuda",
+        "estado_label": "ADEUDA",
+        "deuda": -40.0
+    },
+    {
+        "mz": 8085,
+        "villa": 3,
+        "propietario": "si",
+        "estado": "adeuda",
+        "estado_label": "ADEUDA",
+        "deuda": -40.0
+    },
+    {
+        "mz": 8085,
+        "villa": 4,
+        "propietario": "si",
+        "estado": "adeuda",
+        "estado_label": "ADEUDA",
+        "deuda": -40.0
+    },
+    {
+        "mz": 8085,
+        "villa": 5,
+        "propietario": "no",
+        "estado": "adeuda",
+        "estado_label": "ADEUDA",
+        "deuda": -40.0
+    },
+    {
+        "mz": 8085,
+        "villa": 6,
+        "propietario": "si",
+        "estado": "adeuda",
+        "estado_label": "ADEUDA",
+        "deuda": -40.0
+    },
+    {
+        "mz": 8085,
+        "villa": 7,
+        "propietario": "si",
+        "estado": "adeuda",
+        "estado_label": "ADEUDA",
+        "deuda": -40.0
+    },
+    {
+        "mz": 8085,
+        "villa": 8,
+        "propietario": "si",
+        "estado": "afavor",
+        "estado_label": "A FAVOR",
+        "deuda": 15.0
+    },
+    {
+        "mz": 8085,
+        "villa": 9,
+        "propietario": "si",
+        "estado": "adeuda",
+        "estado_label": "ADEUDA",
+        "deuda": -24.98
+    },
+    {
+        "mz": 8085,
+        "villa": 10,
+        "propietario": "si",
+        "estado": "cancelado",
+        "estado_label": "CANCELADO",
+        "deuda": 0.0
+    },
+    {
+        "mz": 8085,
+        "villa": 11,
+        "propietario": "si",
+        "estado": "afavor",
+        "estado_label": "A FAVOR",
+        "deuda": 15.0
+    },
+    {
+        "mz": 8085,
+        "villa": 12,
+        "propietario": "si",
+        "estado": "adeuda",
+        "estado_label": "ADEUDA",
+        "deuda": -24.98
+    },
+    {
+        "mz": 8085,
+        "villa": 13,
+        "propietario": "si",
+        "estado": "cancelado",
+        "estado_label": "CANCELADO",
+        "deuda": 0.0
+    },
+    {
+        "mz": 8085,
+        "villa": 14,
+        "propietario": "si",
+        "estado": "adeuda",
+        "estado_label": "ADEUDA",
+        "deuda": -40.0
+    },
+    {
+        "mz": 8085,
+        "villa": 15,
+        "propietario": "si",
+        "estado": "adeuda",
+        "estado_label": "ADEUDA",
+        "deuda": -40.0
+    },
+    {
+        "mz": 8085,
+        "villa": 16,
+        "propietario": "si",
+        "estado": "adeuda",
+        "estado_label": "ADEUDA",
+        "deuda": -40.0
+    },
+    {
+        "mz": 8085,
+        "villa": 17,
+        "propietario": "si",
+        "estado": "adeuda",
+        "estado_label": "ADEUDA",
+        "deuda": -40.0
+    },
+    {
+        "mz": 8085,
+        "villa": 18,
+        "propietario": "si",
+        "estado": "adeuda",
+        "estado_label": "ADEUDA",
+        "deuda": -25.98
+    },
+    {
+        "mz": 8085,
+        "villa": 19,
+        "propietario": "si",
+        "estado": "adeuda",
+        "estado_label": "ADEUDA",
+        "deuda": -40.0
+    },
+    {
+        "mz": 8085,
+        "villa": 20,
+        "propietario": "si",
+        "estado": "adeuda",
+        "estado_label": "ADEUDA",
+        "deuda": -40.0
+    },
+    {
+        "mz": 8085,
+        "villa": 21,
+        "propietario": "si",
+        "estado": "afavor",
+        "estado_label": "A FAVOR",
+        "deuda": 15.04
+    },
+    {
+        "mz": 8085,
+        "villa": 22,
+        "propietario": "si",
+        "estado": "adeuda",
+        "estado_label": "ADEUDA",
+        "deuda": -25.0
+    },
+    {
+        "mz": 8085,
+        "villa": 23,
+        "propietario": "si",
+        "estado": "adeuda",
+        "estado_label": "ADEUDA",
+        "deuda": -40.0
+    },
+    {
+        "mz": 8085,
+        "villa": 24,
+        "propietario": "si",
+        "estado": "adeuda",
+        "estado_label": "ADEUDA",
+        "deuda": -40.0
+    },
+    {
+        "mz": 8085,
+        "villa": 25,
+        "propietario": "si",
+        "estado": "afavor",
+        "estado_label": "A FAVOR",
+        "deuda": 15.0
+    },
+    {
+        "mz": 8085,
+        "villa": 26,
+        "propietario": "si",
+        "estado": "adeuda",
+        "estado_label": "ADEUDA",
+        "deuda": -40.0
+    },
+    {
+        "mz": 8085,
+        "villa": 27,
+        "propietario": "no",
+        "estado": "adeuda",
+        "estado_label": "ADEUDA",
+        "deuda": -40.0
+    },
+    {
+        "mz": 8085,
+        "villa": 28,
+        "propietario": "si",
+        "estado": "adeuda",
+        "estado_label": "ADEUDA",
+        "deuda": -40.0
+    },
+    {
+        "mz": 8085,
+        "villa": 29,
+        "propietario": "si",
+        "estado": "afavor",
+        "estado_label": "A FAVOR",
+        "deuda": 15.02
+    },
+    {
+        "mz": 8085,
+        "villa": 30,
+        "propietario": "si",
+        "estado": "adeuda",
+        "estado_label": "ADEUDA",
+        "deuda": -30.0
+    },
+    {
+        "mz": 8085,
+        "villa": 31,
+        "propietario": "si",
+        "estado": "adeuda",
+        "estado_label": "ADEUDA",
+        "deuda": -25.0
+    },
+    {
+        "mz": 8085,
+        "villa": 32,
+        "propietario": "si",
+        "estado": "adeuda",
+        "estado_label": "ADEUDA",
+        "deuda": -40.0
+    },
+    {
+        "mz": 8085,
+        "villa": 33,
+        "propietario": "si",
+        "estado": "adeuda",
+        "estado_label": "ADEUDA",
+        "deuda": -24.98
+    },
+    {
+        "mz": 8085,
+        "villa": 34,
+        "propietario": "si",
+        "estado": "adeuda",
+        "estado_label": "ADEUDA",
+        "deuda": -40.0
+    },
+    {
+        "mz": 8085,
+        "villa": 35,
+        "propietario": "si",
+        "estado": "afavor",
+        "estado_label": "A FAVOR",
+        "deuda": 15.02
+    },
+    {
+        "mz": 8085,
+        "villa": 36,
+        "propietario": "si",
+        "estado": "adeuda",
+        "estado_label": "ADEUDA",
+        "deuda": -40.0
+    },
+    {
+        "mz": 8085,
+        "villa": 37,
+        "propietario": "si",
+        "estado": "adeuda",
+        "estado_label": "ADEUDA",
+        "deuda": -40.0
+    },
+    {
+        "mz": 8085,
+        "villa": 38,
+        "propietario": "si",
+        "estado": "afavor",
+        "estado_label": "A FAVOR",
+        "deuda": 15.02
+    },
+    {
+        "mz": 8085,
+        "villa": 39,
+        "propietario": "si",
+        "estado": "afavor",
+        "estado_label": "A FAVOR",
+        "deuda": 15.5
+    },
+    {
+        "mz": 8085,
+        "villa": 40,
+        "propietario": "si",
+        "estado": "afavor",
+        "estado_label": "A FAVOR",
+        "deuda": 15.0
+    },
+    {
+        "mz": 8085,
+        "villa": 41,
+        "propietario": "si",
+        "estado": "afavor",
+        "estado_label": "A FAVOR",
+        "deuda": 15.02
+    },
+    {
+        "mz": 8085,
+        "villa": 42,
+        "propietario": "si",
+        "estado": "adeuda",
+        "estado_label": "ADEUDA",
+        "deuda": -24.98
+    },
+    {
+        "mz": 8085,
+        "villa": 43,
+        "propietario": "si",
+        "estado": "afavor",
+        "estado_label": "A FAVOR",
+        "deuda": 15.02
+    },
+    {
+        "mz": 8085,
+        "villa": 44,
+        "propietario": "si",
+        "estado": "afavor",
+        "estado_label": "A FAVOR",
+        "deuda": 15.02
+    },
+    {
+        "mz": 8085,
+        "villa": 45,
+        "propietario": "si",
+        "estado": "adeuda",
+        "estado_label": "ADEUDA",
+        "deuda": -40.0
+    },
+    {
+        "mz": 8085,
+        "villa": 46,
+        "propietario": "si",
+        "estado": "afavor",
+        "estado_label": "A FAVOR",
+        "deuda": 15.02
+    },
+    {
+        "mz": 8085,
+        "villa": 47,
+        "propietario": "si",
+        "estado": "afavor",
+        "estado_label": "A FAVOR",
+        "deuda": 15.0
+    },
+    {
+        "mz": 8085,
+        "villa": 48,
+        "propietario": "si",
+        "estado": "afavor",
+        "estado_label": "A FAVOR",
+        "deuda": 3.0
+    },
+    {
+        "mz": 8085,
+        "villa": 49,
+        "propietario": "si",
+        "estado": "adeuda",
+        "estado_label": "ADEUDA",
+        "deuda": -2.0
+    }
+]
+
+function resumenMz(mz) {
+
+const villas = datos.filter(v => v.mz == mz)
+
+return {
+
+total: villas.length,
+
+alDia: villas.filter(v =>
+v.propietario=="si" &&
+(v.estado_label=="CANCELADO" || v.estado_label=="A FAVOR")
+).length,
+
+adeudan: villas.filter(v =>
+v.propietario=="si" && v.estado_label=="ADEUDA"
+).length,
+
+noentregadas: villas.filter(v => v.propietario=="no").length
+
+}
+
+}
+
+function dibujar() {
+
+const mapa = document.getElementById("mapa")
+
+const manzanas = [...new Set(datos.map(d => d.mz))].sort()
+
+manzanas.forEach(mz => {
+
+const r = resumenMz(mz)
+
+let divMz = document.createElement("div")
+divMz.className = "manzana"
+
+let titulo = document.createElement("div")
+titulo.className = "titulo-mz"
+titulo.innerText = "MZ " + mz
+
+let resumen = document.createElement("div")
+resumen.className = "resumen-mz"
+
+resumen.innerHTML = `
+Villas: <b>${r.total}</b><br>
+Al día: <b>${r.alDia}</b><br>
+Adeudan: <b>${r.adeudan}</b><br>
+No entregadas: <b>${r.noentregadas}</b>
+`
+
+divMz.appendChild(titulo)
+divMz.appendChild(resumen)
+
+let grid = document.createElement("div")
+grid.className = "villas-grid"
+
+const villas = datos.filter(v => v.mz == mz)
+
+villas.forEach(v => {
+
+let clase = ""
+
+if(v.propietario=="no")
+clase="noentregada"
+else
+clase=v.estado
+
+let vDiv = document.createElement("div")
+vDiv.className = "villa " + clase
+vDiv.innerText = v.villa
+
+vDiv.onclick = () => {
+
+let det = `MZ: ${v.mz} - Villa: ${v.villa}\n`
+det += `Propietario: ${v.propietario}\n`
+det += `Estado: ${v.estado_label}\n`
+det += `Pendiente: $${v.deuda}`
+
+alert(det)
+
+}
+
+grid.appendChild(vDiv)
+
+})
+
+divMz.appendChild(grid)
+
+mapa.appendChild(divMz)
+
+})
+
+}
+
+dibujar()
+
+</script>
+
+</body>
+</html>
