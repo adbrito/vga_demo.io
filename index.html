@@ -79,13 +79,67 @@ background:#f39c12;
 color:white;
 }
 
+.leyenda {
+display:flex;
+justify-content:center;
+gap:25px;
+margin-bottom:15px;
+font-size:14px;
+}
+
+.item-leyenda{
+display:flex;
+align-items:center;
+gap:8px;
+}
+
+.cuadro{
+width:18px;
+height:18px;
+border-radius:3px;
+}
+
+.resumen-general{
+text-align:center;
+background:white;
+padding:12px 18px;
+margin:0 auto 20px auto;
+border-radius:8px;
+border:1px solid #dfe6e9;
+font-size:14px;
+max-width:650px;
+width:90%;
+box-shadow:0 2px 6px rgba(0,0,0,0.05);
+}
+
 </style>
 </head>
 
 <body>
 
-<h2 style="text-align:center">Estado Villas Urbanización</h2>
-<h2 style="text-align:center">Fecha corte: 11/marzo/2026 a las 09:00</h2>
+<h2 style="text-align:center">Estado Villas Urbanización Villa Geranio 4</h2>
+<h2 style="text-align:center">Fecha corte: 12/March/2026 08:57</h2>
+
+<div class="leyenda">
+
+<div class="item-leyenda">
+<div class="cuadro adeuda"></div>
+<span>Adeuda</span>
+</div>
+
+<div class="item-leyenda">
+<div class="cuadro cancelado"></div>
+<span>Al día</span>
+</div>
+
+<div class="item-leyenda">
+<div class="cuadro noentregada"></div>
+<span>No entregada</span>
+</div>
+
+</div>
+
+<div class="resumen-general" id="resumenGeneral"></div>
 <div class="mapa" id="mapa"></div>
 
 <script>
@@ -223,9 +277,9 @@ const datos = [
         "mz": 8071,
         "villa": 9,
         "propietario": "si",
-        "estado": "adeuda",
-        "estado_label": "ADEUDA",
-        "deuda": -24.98
+        "estado": "afavor",
+        "estado_label": "A FAVOR",
+        "deuda": 15.02
     },
     {
         "mz": 8071,
@@ -439,9 +493,9 @@ const datos = [
         "mz": 8072,
         "villa": 26,
         "propietario": "si",
-        "estado": "adeuda",
-        "estado_label": "ADEUDA",
-        "deuda": -40.0
+        "estado": "cancelado",
+        "estado_label": "CANCELADO",
+        "deuda": 0.0
     },
     {
         "mz": 8072,
@@ -495,9 +549,9 @@ const datos = [
         "mz": 8072,
         "villa": 33,
         "propietario": "si",
-        "estado": "adeuda",
-        "estado_label": "ADEUDA",
-        "deuda": -40.0
+        "estado": "cancelado",
+        "estado_label": "CANCELADO",
+        "deuda": 0.0
     },
     {
         "mz": 8072,
@@ -719,9 +773,9 @@ const datos = [
         "mz": 8073,
         "villa": 11,
         "propietario": "si",
-        "estado": "adeuda",
-        "estado_label": "ADEUDA",
-        "deuda": -25.0
+        "estado": "afavor",
+        "estado_label": "A FAVOR",
+        "deuda": 15.0
     },
     {
         "mz": 8073,
@@ -1151,9 +1205,9 @@ const datos = [
         "mz": 8074,
         "villa": 29,
         "propietario": "si",
-        "estado": "adeuda",
-        "estado_label": "ADEUDA",
-        "deuda": -40.0
+        "estado": "cancelado",
+        "estado_label": "CANCELADO",
+        "deuda": 0.0
     },
     {
         "mz": 8074,
@@ -2279,9 +2333,9 @@ const datos = [
         "mz": 8078,
         "villa": 2,
         "propietario": "si",
-        "estado": "adeuda",
-        "estado_label": "ADEUDA",
-        "deuda": -24.8
+        "estado": "afavor",
+        "estado_label": "A FAVOR",
+        "deuda": 15.2
     },
     {
         "mz": 8078,
@@ -2511,9 +2565,9 @@ const datos = [
         "mz": 8078,
         "villa": 31,
         "propietario": "si",
-        "estado": "adeuda",
-        "estado_label": "ADEUDA",
-        "deuda": -40.0
+        "estado": "cancelado",
+        "estado_label": "CANCELADO",
+        "deuda": 0.0
     },
     {
         "mz": 8078,
@@ -3167,9 +3221,9 @@ const datos = [
         "mz": 8080,
         "villa": 29,
         "propietario": "si",
-        "estado": "adeuda",
-        "estado_label": "ADEUDA",
-        "deuda": -25.0
+        "estado": "afavor",
+        "estado_label": "A FAVOR",
+        "deuda": 5.0
     },
     {
         "mz": 8080,
@@ -3431,9 +3485,9 @@ const datos = [
         "mz": 8081,
         "villa": 20,
         "propietario": "si",
-        "estado": "adeuda",
-        "estado_label": "ADEUDA",
-        "deuda": -40.0
+        "estado": "cancelado",
+        "estado_label": "CANCELADO",
+        "deuda": 0.0
     },
     {
         "mz": 8081,
@@ -3575,9 +3629,9 @@ const datos = [
         "mz": 8081,
         "villa": 38,
         "propietario": "si",
-        "estado": "adeuda",
-        "estado_label": "ADEUDA",
-        "deuda": -25.0
+        "estado": "afavor",
+        "estado_label": "A FAVOR",
+        "deuda": 15.0
     },
     {
         "mz": 8081,
@@ -3919,9 +3973,9 @@ const datos = [
         "mz": 8082,
         "villa": 39,
         "propietario": "si",
-        "estado": "adeuda",
-        "estado_label": "ADEUDA",
-        "deuda": -24.98
+        "estado": "afavor",
+        "estado_label": "A FAVOR",
+        "deuda": 15.02
     },
     {
         "mz": 8082,
@@ -4023,9 +4077,9 @@ const datos = [
         "mz": 8083,
         "villa": 10,
         "propietario": "si",
-        "estado": "adeuda",
-        "estado_label": "ADEUDA",
-        "deuda": -40.0
+        "estado": "cancelado",
+        "estado_label": "CANCELADO",
+        "deuda": 0.0
     },
     {
         "mz": 8083,
@@ -4319,9 +4373,9 @@ const datos = [
         "mz": 8085,
         "villa": 3,
         "propietario": "si",
-        "estado": "adeuda",
-        "estado_label": "ADEUDA",
-        "deuda": -40.0
+        "estado": "cancelado",
+        "estado_label": "CANCELADO",
+        "deuda": 0.0
     },
     {
         "mz": 8085,
@@ -4471,9 +4525,9 @@ const datos = [
         "mz": 8085,
         "villa": 22,
         "propietario": "si",
-        "estado": "adeuda",
-        "estado_label": "ADEUDA",
-        "deuda": -25.0
+        "estado": "afavor",
+        "estado_label": "A FAVOR",
+        "deuda": 15.0
     },
     {
         "mz": 8085,
@@ -4693,6 +4747,32 @@ const datos = [
     }
 ]
 
+function resumenGeneral(){
+
+const entregadas = datos.filter(v => v.propietario=="si")
+
+const adeudan = entregadas.filter(v => v.estado_label=="ADEUDA").length
+
+const alDia = entregadas.filter(v =>
+v.estado_label=="CANCELADO" || v.estado_label=="A FAVOR"
+).length
+
+const noEntregadas = datos.filter(v => v.propietario=="no").length
+
+const total = datos.length
+
+const porcentajeMorosidad = ((adeudan / entregadas.length) * 100).toFixed(1)
+
+document.getElementById("resumenGeneral").innerHTML = `
+Total villas: <b>${total}</b> |
+Al día: <b>${alDia}</b> |
+Adeudan: <b>${adeudan}</b> |
+No entregadas: <b>${noEntregadas}</b> |
+Morosidad: <b>${porcentajeMorosidad}%</b>
+`
+
+}
+
 function resumenMz(mz) {
 
 const villas = datos.filter(v => v.mz == mz)
@@ -4769,7 +4849,13 @@ vDiv.onclick = () => {
 let det = `MZ: ${v.mz} - Villa: ${v.villa}\n`
 det += `Propietario: ${v.propietario}\n`
 det += `Estado: ${v.estado_label}\n`
-det += `Pendiente: $${v.deuda}`
+if (v.deuda > 0) {
+  det += `Valor a favor: $${v.deuda}`
+} else if (v.deuda < 0) {
+  det += `Pendiente: $${Math.abs(v.deuda)}`
+} else {
+  det += `Sin saldo`
+}
 
 alert(det)
 
@@ -4787,6 +4873,7 @@ mapa.appendChild(divMz)
 
 }
 
+resumenGeneral()
 dibujar()
 
 </script>
