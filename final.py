@@ -1,5 +1,6 @@
 import pandas as pd
 import json
+from datetime import datetime
 
 def generar_html(nombre_excel, nombre_html="index.html"):
 
@@ -35,7 +36,7 @@ def generar_html(nombre_excel, nombre_html="index.html"):
         lista_final.append(registro)
 
     datos_json = json.dumps(lista_final, indent=4, ensure_ascii=False)
-
+    fecha_corte = datetime.now().strftime("%d/%B/%Y %H:%M")
     html = f"""
 <!doctype html>
 <html>
@@ -117,18 +118,98 @@ background:#f39c12;
 color:white;
 }}
 
+.leyenda {{
+display:flex;
+justify-content:center;
+gap:25px;
+margin-bottom:15px;
+font-size:14px;
+}}
+
+.item-leyenda{{
+display:flex;
+align-items:center;
+gap:8px;
+}}
+
+.cuadro{{
+width:18px;
+height:18px;
+border-radius:3px;
+}}
+
+.resumen-general{{
+text-align:center;
+background:white;
+padding:12px 18px;
+margin:0 auto 20px auto;
+border-radius:8px;
+border:1px solid #dfe6e9;
+font-size:14px;
+max-width:650px;
+width:90%;
+box-shadow:0 2px 6px rgba(0,0,0,0.05);
+}}
+
 </style>
 </head>
 
 <body>
 
 <h2 style="text-align:center">Estado Villas Urbanización Villa Geranio 4</h2>
+<h2 style="text-align:center">Fecha corte: {fecha_corte}</h2>
 
+<div class="leyenda">
+
+<div class="item-leyenda">
+<div class="cuadro adeuda"></div>
+<span>Adeuda</span>
+</div>
+
+<div class="item-leyenda">
+<div class="cuadro cancelado"></div>
+<span>Al día</span>
+</div>
+
+<div class="item-leyenda">
+<div class="cuadro noentregada"></div>
+<span>No entregada</span>
+</div>
+
+</div>
+
+<div class="resumen-general" id="resumenGeneral"></div>
 <div class="mapa" id="mapa"></div>
 
 <script>
 
 const datos = {datos_json}
+
+function resumenGeneral(){{
+
+const entregadas = datos.filter(v => v.propietario=="si")
+
+const adeudan = entregadas.filter(v => v.estado_label=="ADEUDA").length
+
+const alDia = entregadas.filter(v =>
+v.estado_label=="CANCELADO" || v.estado_label=="A FAVOR"
+).length
+
+const noEntregadas = datos.filter(v => v.propietario=="no").length
+
+const total = datos.length
+
+const porcentajeMorosidad = ((adeudan / entregadas.length) * 100).toFixed(1)
+
+document.getElementById("resumenGeneral").innerHTML = `
+Total villas: <b>${{total}}</b> |
+Al día: <b>${{alDia}}</b> |
+Adeudan: <b>${{adeudan}}</b> |
+No entregadas: <b>${{noEntregadas}}</b> |
+Morosidad: <b>${{porcentajeMorosidad}}%</b>
+`
+
+}}
 
 function resumenMz(mz) {{
 
@@ -206,7 +287,13 @@ vDiv.onclick = () => {{
 let det = `MZ: ${{v.mz}} - Villa: ${{v.villa}}\\n`
 det += `Propietario: ${{v.propietario}}\\n`
 det += `Estado: ${{v.estado_label}}\\n`
-det += `Pendiente: $${{v.deuda}}`
+if (v.deuda > 0) {{
+  det += `Valor a favor: $${{v.deuda}}`
+}} else if (v.deuda < 0) {{
+  det += `Pendiente: $${{Math.abs(v.deuda)}}`
+}} else {{
+  det += `Sin saldo`
+}}
 
 alert(det)
 
@@ -224,6 +311,7 @@ mapa.appendChild(divMz)
 
 }}
 
+resumenGeneral()
 dibujar()
 
 </script>
