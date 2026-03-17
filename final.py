@@ -290,9 +290,9 @@ det += `Estado: ${{v.estado_label}}\\n`
 if (v.deuda > 0) {{
   det += `Valor a favor: $${{v.deuda}}`
 }} else if (v.deuda < 0) {{
-  det += `Pendiente: $${{Math.abs(v.deuda)}}`
+  det += `Pendiente de cancelar: $${{Math.abs(v.deuda)}}`
 }} else {{
-  det += `Sin saldo`
+  det += `Sin saldo a favor`
 }}
 
 alert(det)
