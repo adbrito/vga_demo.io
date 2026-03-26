@@ -298,7 +298,6 @@ divMz.appendChild(titulo)
 divMz.appendChild(resumen)
 
 
-
 let grid = document.createElement("div")
 grid.className = "villas-grid"
 
