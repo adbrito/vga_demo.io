@@ -7,6 +7,21 @@ def generar_html(nombre_excel, nombre_html="index.html"):
     df = pd.read_excel(nombre_excel)
     df.columns = df.columns.str.strip()
 
+
+    df_tags = pd.read_excel("pagos.xlsx")
+    df_tags.columns = df_tags.columns.str.strip()
+
+    # Limpiar columna TAGS (vacíos a 0)
+    df_tags['# TAGS'] = pd.to_numeric(df_tags['# TAGS'], errors='coerce').fillna(0)
+
+    # Agrupar por Mz y Villa
+    tags_group = df_tags.groupby(['Mz', 'Villa'])['# TAGS'].sum().reset_index()
+    tags_dict = {}
+
+    for _, row in tags_group.iterrows():
+        key = f"{int(row['Mz'])}-{int(row['Villa'])}"
+        tags_dict[key] = int(row['# TAGS'])
+    tags_json = json.dumps(tags_dict)
     lista_final = []
 
     for _, row in df.iterrows():
@@ -185,6 +200,10 @@ box-shadow:0 2px 6px rgba(0,0,0,0.05);
 
 const datos = {datos_json}
 
+const tagsData = {tags_json}
+
+
+
 function resumenGeneral(){{
 
 const entregadas = datos.filter(v => v.propietario=="si")
@@ -234,6 +253,20 @@ noentregadas: villas.filter(v => v.propietario=="no").length
 
 }}
 
+
+function cambiarTab(tabId, btn) {{
+
+document.querySelectorAll(".tab-main-content")
+.forEach(t => t.classList.remove("active"))
+
+document.querySelectorAll(".tab-main-btn")
+.forEach(b => b.classList.remove("active"))
+
+document.getElementById(tabId).classList.add("active")
+btn.classList.add("active")
+
+}}
+
 function dibujar() {{
 
 const mapa = document.getElementById("mapa")
@@ -263,6 +296,8 @@ No entregadas: <b>${{r.noentregadas}}</b>
 
 divMz.appendChild(titulo)
 divMz.appendChild(resumen)
+
+
 
 let grid = document.createElement("div")
 grid.className = "villas-grid"
@@ -295,6 +330,10 @@ if (v.deuda > 0) {{
   det += `Sin saldo a favor`
 }}
 
+let key = `${{v.mz}}-${{v.villa}}`
+let tags = tagsData[key] ||  `No solicitó tags`
+
+det += `\nTags pagados: ${{tags}}`
 alert(det)
 
 }}
@@ -313,6 +352,7 @@ mapa.appendChild(divMz)
 
 resumenGeneral()
 dibujar()
+
 
 </script>
 
