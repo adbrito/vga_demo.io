@@ -33,11 +33,20 @@ def generar_html(nombre_excel, nombre_html="index.html"):
         except:
             saldo_float = 0.0
 
+        valor_abonado = str(row['ABONADO']).strip().replace(',', '.')
+
+        try:
+            saldo_abonado_float = float(valor_abonado)
+        except:
+            saldo_abonado_float = 0.0
+
         propietario_raw = str(row['PROPIETARIO']).strip().lower()
         entregada = "no" if propietario_raw == "no" else "si"
 
         estado_original = str(row['ESTADO']).strip().upper()
         estado_css = estado_original.lower().replace(" ", "")
+
+        
 
         registro = {
             "mz": int(row['Mz']),
@@ -45,7 +54,8 @@ def generar_html(nombre_excel, nombre_html="index.html"):
             "propietario": entregada,
             "estado": estado_css,
             "estado_label": estado_original,
-            "deuda": saldo_float
+            "deuda": round(saldo_float, 2),
+            "abonado": round(saldo_abonado_float, 2)
         }
 
         lista_final.append(registro)
@@ -267,6 +277,7 @@ btn.classList.add("active")
 
 }}
 
+
 function dibujar() {{
 
 const mapa = document.getElementById("mapa")
@@ -321,13 +332,22 @@ vDiv.onclick = () => {{
 let det = `MZ: ${{v.mz}} - Villa: ${{v.villa}}\\n`
 det += `Propietario: ${{v.propietario}}\\n`
 det += `Estado: ${{v.estado_label}}\\n`
-if (v.deuda > 0) {{
-  det += `Valor a favor: $${{v.deuda}}`
-}} else if (v.deuda < 0) {{
-  det += `Pendiente de cancelar: $${{Math.abs(v.deuda)}}`
+
+
+if (v.abonado > 0) {{
+  det += `Valor abonado al momento: $${{v.abonado}}\\n`
 }} else {{
-  det += `Sin saldo a favor`
+  det += `Sin abonos registrados\\n`
 }}
+
+if (v.deuda > 0) {{
+  det += `Valor a favor: $${{v.deuda}}\\n`
+}} else if (v.deuda < 0) {{
+  det += `Pendiente de cancelar: $${{v.deuda*-1}}\\n`
+}} else {{
+  det += `Sin saldo a favor\\n`
+}}
+
 
 let key = `${{v.mz}}-${{v.villa}}`
 let tags = tagsData[key] ||  `No solicitó tags`
